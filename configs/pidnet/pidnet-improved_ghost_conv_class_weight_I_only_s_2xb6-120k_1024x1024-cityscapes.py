@@ -1,3 +1,12 @@
+'''
+为了在 PIDNet 中集成 Ghost Convolution，我们需要做以下几步修改：
+
+新增 GhostModule 类：这是 Ghost Conv 的核心实现（一半卷积，一半深度可分离卷积）。
+新增 GhostBasicBlock 类：模仿 ResNet 的 BasicBlock，但将其内部的普通 Conv3x3 替换为 GhostModule。
+修改 PIDNetImprovedGhostConv 主类：
+仅将 I 分支 (Context Branch) 的 BasicBlock 替换为 GhostBasicBlock。
+P 分支 (Detail Branch) 和 D 分支 (Boundary Branch) 保持原样，以确保高频细节和边缘精度不丢失（这是 PIDNet 的灵魂）。
+'''
 _base_ = [
     '../_base_/datasets/cityscapes_1024x1024.py',
     '../_base_/default_runtime.py'
@@ -5,11 +14,32 @@ _base_ = [
 
 # The class_weight is borrowed from https://github.com/openseg-group/OCNet.pytorch/issues/14 # noqa
 # Licensed under the MIT License
+# class_weight = [
+#     0.8373, 0.918, 0.866, 1.0345, 1.0166, 0.9969, 0.9754, 1.0489, 0.8786,
+#     1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
+#     1.0507
+# ]
+
 class_weight = [
-    0.8373, 0.918, 0.866, 1.0345, 1.0166, 0.9969, 0.9754, 1.0489, 0.8786,
+    0.8373, 0.9180, 0.8660, 1.0345, 1.0166, 0.9969, 0.9754, 1.0489, 0.8786,
     1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
     1.0507
 ]
+
+# 1. 指定从 12万轮 的权重开始加载
+load_from = 'work_dirs/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000.pth'
+
+# 2. 彻底关闭 resume (非常重要！)
+resume = False 
+
+# 3. 设置这就只是一个 12万轮 的新任务
+# 注意：这里不要写 240000，写 120000。
+# 因为计数器会归零，我们只需要让它再跑剩下的 12万轮 即可。
+
+# 4. (可选但推荐) 调整学习率
+# 因为你的模型已经有 75% mIoU 了，如果用初始的大学习率 (比如 0.01) 可能会震荡。
+# 建议把初始学习率调小 2~5 倍。
+
 checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
 crop_size = (1024, 1024)
 data_preprocessor = dict(
@@ -25,7 +55,7 @@ model = dict(
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
     backbone=dict(
-        type='PIDNet',
+        type='PIDNetImprovedGhostConv',
         in_channels=3,
         channels=32,
         ppm_channels=96,
@@ -47,7 +77,7 @@ model = dict(
             dict(
                 type='CrossEntropyLoss',
                 use_sigmoid=False,
-                # class_weight=class_weight,
+#                class_weight=class_weight,
                 loss_weight=0.4),
             dict(
                 type='OhemCrossEntropy',
@@ -60,9 +90,10 @@ model = dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
-                class_weight=class_weight,
+                # class_weight=class_weight,
                 loss_weight=1.0)
         ]),
+        
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
@@ -83,8 +114,14 @@ train_pipeline = [
 train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
 
 iters = 120000
+# iters = 240000
 # optimizer
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+# optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+# 4. (可选但推荐) 调整学习率
+# 因为你的模型已经有 75% mIoU 了，如果用初始的大学习率 (比如 0.01) 可能会震荡。
+# 建议把初始学习率调小 2~5 倍。
+optimizer = dict(type='SGD', lr=0.005, momentum=0.9, weight_decay=0.0005)
+
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
 # learning policy
 param_scheduler = [
@@ -98,7 +135,7 @@ param_scheduler = [
 ]
 # training schedule for 120k
 train_cfg = dict(
-    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 10)
+    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 20)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
@@ -106,8 +143,29 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(
-        type='CheckpointHook', by_epoch=False, interval=iters // 10),
+        type='CheckpointHook', by_epoch=False, interval=iters // 20),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 
 randomness = dict(seed=304)
+
+# ================= v1.x 最终修正版 (复制这个) =================
+
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+    
+    # --- 核心修改在这里 ---
+    # 1. 既然是 Demo 推理，不需要 pad 标签，所以去掉 seg_pad_val
+    # 2. 只需要 pad 图片 (pad_val=0) 并凑齐 32 倍数 (size_divisor=32)
+    dict(type='Pad', size_divisor=32, pad_val=0), 
+    # --------------------
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs')
+]
+
+# 覆盖 dataloader 里的 pipeline
+val_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+test_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+
+# ================= 复制结束 =================
