@@ -25,6 +25,7 @@ from .unet import UNet
 from .vit import VisionTransformer
 from .vpd import VPD
 from .pidnet_improved_ghost_conv import PIDNetImprovedGhostConv
+from .pidnet_improved_ghost_conv_Bag_Dappm import PIDNetImprovedGhostConvBagDappm
 
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
@@ -32,5 +33,5 @@ __all__ = [
     'VisionTransformer', 'SwinTransformer', 'MixVisionTransformer',
     'BiSeNetV1', 'BiSeNetV2', 'ICNet', 'TIMMBackbone', 'ERFNet', 'PCPVT',
     'SVT', 'STDCNet', 'STDCContextPathNet', 'BEiT', 'MAE', 'PIDNet', 'MSCAN',
-    'DDRNet', 'VPD', 'PIDNetImprovedGhostConv'
+    'DDRNet', 'VPD', 'PIDNetImprovedGhostConv', 'PIDNetImprovedGhostConvBagDappm'
 ]

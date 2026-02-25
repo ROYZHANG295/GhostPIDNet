@@ -271,9 +271,13 @@ python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-improved_ghost_co
 Flops: 40.916G
 Params: 5.704M
 
-python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-improved_ghost_conv_se_layer_s_2xb6-120k_1024x1024-cityscapes
+python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-improved_ghost_conv_se_layer_s_2xb6-120k_1024x1024-cityscapes --shape 1024 2048
 Flops: 40.925G
 Params: 5.765M
+
+python tools/analysis_tools/get_flops.py configs/ghost3net/ghost-conv3-bag_dappm_s_2xb6-120k_1024x1024-cityscapes.py --shape 1024 2048
+Flops: 44.665G
+Params: 5.818M
 
 # MMDeploy 安装
 https://github.com/open-mmlab/mmdeploy/blob/main/docs/en/get_started.md
