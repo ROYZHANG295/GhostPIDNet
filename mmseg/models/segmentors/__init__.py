@@ -6,8 +6,9 @@ from .encoder_decoder import EncoderDecoder
 from .multimodal_encoder_decoder import MultimodalEncoderDecoder
 from .seg_tta import SegTTAModel
 from .pidnet_distill_wrapper import PIDNetDistillerWrapper
+from .pidnet_distill_I_branch_wrapper import PIDNetDistillerIBranchWrapper
 
 __all__ = [
     'BaseSegmentor', 'EncoderDecoder', 'CascadeEncoderDecoder', 'SegTTAModel',
-    'MultimodalEncoderDecoder', 'DepthEstimator', 'PIDNetDistillerWrapper'
+    'MultimodalEncoderDecoder', 'DepthEstimator', 'PIDNetDistillerWrapper', 'PIDNetDistillerIBranchWrapper'
 ]
