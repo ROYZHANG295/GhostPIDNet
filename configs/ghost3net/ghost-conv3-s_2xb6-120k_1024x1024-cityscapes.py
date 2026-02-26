@@ -12,7 +12,11 @@ class_weight = [
     1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
     1.0507
 ]
-checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
+# 改1 初始化权重 
+#checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
+
+checkpoint_file = 'checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000.pth'
+
 crop_size = (1024, 1024)
 data_preprocessor = dict(
     type='SegDataPreProcessor',
