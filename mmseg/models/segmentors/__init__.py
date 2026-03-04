@@ -7,8 +7,11 @@ from .multimodal_encoder_decoder import MultimodalEncoderDecoder
 from .seg_tta import SegTTAModel
 from .pidnet_distill_wrapper import PIDNetDistillerWrapper
 from .pidnet_distill_I_branch_wrapper import PIDNetDistillerIBranchWrapper
+from .distill_losses import KLDivergence, ChannelWiseDivergence
+from .distill_model import EncoderDecoderKD
 
 __all__ = [
     'BaseSegmentor', 'EncoderDecoder', 'CascadeEncoderDecoder', 'SegTTAModel',
-    'MultimodalEncoderDecoder', 'DepthEstimator', 'PIDNetDistillerWrapper', 'PIDNetDistillerIBranchWrapper'
+    'MultimodalEncoderDecoder', 'DepthEstimator', 'PIDNetDistillerWrapper', 'PIDNetDistillerIBranchWrapper', 
+    'KLDivergence', 'ChannelWiseDivergence', 'EncoderDecoderKD'
 ]
