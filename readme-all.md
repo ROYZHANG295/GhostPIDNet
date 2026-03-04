@@ -38,7 +38,7 @@ conda create --name $TARGET_ENV --clone $SOURCE_ENV
 conda activate $TARGET_ENV
 
 # 删除环境
-conda remove -n 环境名  
+conda env remove -n tsp6k
 
 # 下载 miniconda3 
 https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/
@@ -278,6 +278,10 @@ Params: 5.765M
 python tools/analysis_tools/get_flops.py configs/ghost3net/ghost-conv3-bag_dappm_s_2xb6-120k_1024x1024-cityscapes.py --shape 1024 2048
 Flops: 44.665G
 Params: 5.818M
+
+python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-s_sppf_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py --shape 1024 2048
+Flops: 47.38G
+Params: 7.271M
 
 # MMDeploy 安装
 https://github.com/open-mmlab/mmdeploy/blob/main/docs/en/get_started.md

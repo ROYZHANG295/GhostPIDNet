@@ -1,5 +1,3 @@
-# 20260225:
-# ROY: 在 pidnet-s 的基础上只修改了 PIDNetImprovedGhostConv
 _base_ = [
     '../_base_/datasets/cityscapes_1024x1024.py',
     '../_base_/default_runtime.py'
@@ -12,11 +10,9 @@ class_weight = [
     1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
     1.0507
 ]
-# 改1 初始化权重 
-#checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
 
-checkpoint_file = 'checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000.pth'
 
+checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
 crop_size = (1024, 1024)
 data_preprocessor = dict(
     type='SegDataPreProcessor',
@@ -31,7 +27,7 @@ model = dict(
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
     backbone=dict(
-        type='PIDNetImprovedGhostConv',
+        type='PIDNet',
         in_channels=3,
         channels=32,
         ppm_channels=96,
@@ -53,20 +49,20 @@ model = dict(
             dict(
                 type='CrossEntropyLoss',
                 use_sigmoid=False,
-                # class_weight=class_weight,
+#                class_weight=class_weight,
                 loss_weight=0.4),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
-                class_weight=class_weight,
+               class_weight=class_weight,
                 loss_weight=1.0),
             dict(type='BoundaryLoss', loss_weight=20.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
-                class_weight=class_weight,
+               class_weight=class_weight,
                 loss_weight=1.0)
         ]),
     train_cfg=dict(),
@@ -117,3 +113,24 @@ default_hooks = dict(
     visualization=dict(type='SegVisualizationHook'))
 
 randomness = dict(seed=304)
+
+# ================= v1.x 最终修正版 (复制这个) =================
+
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+    
+    # --- 核心修改在这里 ---
+    # 1. 既然是 Demo 推理，不需要 pad 标签，所以去掉 seg_pad_val
+    # 2. 只需要 pad 图片 (pad_val=0) 并凑齐 32 倍数 (size_divisor=32)
+    dict(type='Pad', size_divisor=32, pad_val=0), 
+    # --------------------
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs')
+]
+
+# 覆盖 dataloader 里的 pipeline
+val_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+test_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+
+# ================= 复制结束 =================

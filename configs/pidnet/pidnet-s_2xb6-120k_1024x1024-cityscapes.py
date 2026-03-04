@@ -111,3 +111,24 @@ default_hooks = dict(
     visualization=dict(type='SegVisualizationHook'))
 
 randomness = dict(seed=304)
+
+# ================= v1.x 最终修正版 (复制这个) =================
+
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+    
+    # --- 核心修改在这里 ---
+    # 1. 既然是 Demo 推理，不需要 pad 标签，所以去掉 seg_pad_val
+    # 2. 只需要 pad 图片 (pad_val=0) 并凑齐 32 倍数 (size_divisor=32)
+    dict(type='Pad', size_divisor=32, pad_val=0), 
+    # --------------------
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs')
+]
+
+# 覆盖 dataloader 里的 pipeline
+val_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+test_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+
+# ================= 复制结束 =================
