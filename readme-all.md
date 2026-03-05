@@ -386,3 +386,8 @@ python exps/dair-v2x/bev_height_lss_r50_864_1536_128x128_102.py --amp_backend na
 
 # 知识蒸馏
 python tools/train.py configs/pidnet/pidnet-improved_ghost_conv_distill_teacher_PIDNet-M-class_weight_s_2xb6-120k_1024x1024-cityscapes.py
+
+
+python benchmark_cpu_final.py configs/pidnet/pidnet-improved_ghost_conv_s_2xb6-120k_1024x1024-cityscapes.py checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000-miou-77.8.pth --height 512 --width 1024 --threads 1
+
+python benchmark_cpu_final.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes/iter_120000.pth --threads 1 --height 512 --width 1024
