@@ -254,6 +254,11 @@ Input shape: (1024, 2048)
 Flops: 47.517G
 Params: 7.721M
 
+# PCONV
+python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py --shape 1024 2048
+Flops: 42.876G
+Params: 5.122M
+
 python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-m_2xb6-120k_1024x1024-cityscapes.py --shape 1024 2048
 python tools/analysis_tools/get_flops.py configs/pidnet/pidnet-l_2xb6-120k_1024x1024-cityscapes.py --shape 1024 2048
 
@@ -368,6 +373,7 @@ http://19.244.69.121:8188/
 
 # 查看配置文件最终内容
 python tools/misc/print_config.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py
+python tools/misc/print_config.py configs/pidnet/pidnet-faster-pconv-P-only-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py > pid_faster_structure.txt
 
 # 跑 SMOKE + KITTI
 python tools/train.py configs/smoke/smoke_dla34_dlaneck_gn-all_4xb8-6x_kitti-mono3d.py
@@ -391,3 +397,43 @@ python tools/train.py configs/pidnet/pidnet-improved_ghost_conv_distill_teacher_
 python benchmark_cpu_final.py configs/pidnet/pidnet-improved_ghost_conv_s_2xb6-120k_1024x1024-cityscapes.py checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000-miou-77.8.pth --height 512 --width 1024 --threads 1
 
 python benchmark_cpu_final.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes/iter_120000.pth --threads 1 --height 512 --width 1024
+
+python benchmark_cpu_final.py configs/pidnet/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py work_dirs/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_120000.pth --threads 1 --height 512 --width 1024
+============================================
+Model: ghost_pidnet.onnx
+Precision: FP16
+Resolution: 1024x2048
+Avg Latency: 4.41 ms
+FPS: 226.78
+============================================
+
+============================================
+Model: pidnet_s.onnx
+Precision: FP16
+Resolution: 1024x2048
+Avg Latency: 4.49 ms
+FPS: 222.83
+============================================
+
+============================================
+Model: faster_pidnet.onnx
+Precision: FP16
+Resolution: 1024x2048
+Avg Latency: 4.36 ms
+FPS: 229.20
+============================================
+
+============================================
+Model: pidnet_s.onnx
+Precision: FP16
+Resolution: 512x1024
+Avg Latency: 1.42 ms
+FPS: 702.30
+============================================
+
+python benchmark_trt.py pidnet_s.onnx --fp16
+python benchmark_trt.py faster_pidnet.onnx --fp16
+
+
+# 打印网络结构 
+python print_net.py > pid_faster_structure.txt

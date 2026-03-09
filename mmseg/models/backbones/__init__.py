@@ -27,12 +27,14 @@ from .vpd import VPD
 from .pidnet_improved_ghost_conv import PIDNetImprovedGhostConv
 from .pidnet_improved_ghost_conv_Bag_Dappm import PIDNetImprovedGhostConvBagDappm
 from .pidnet_sppf import PIDNetSPPF
-
+from .pidnet_improved_pconv import FasterPIDNet
+from .pidnet_improved_pconv_p import FasterPIDNet_P
+from .pidnet_space_opt import ESPIDNet
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
     'ResNeSt', 'MobileNetV2', 'UNet', 'CGNet', 'MobileNetV3',
     'VisionTransformer', 'SwinTransformer', 'MixVisionTransformer',
     'BiSeNetV1', 'BiSeNetV2', 'ICNet', 'TIMMBackbone', 'ERFNet', 'PCPVT',
     'SVT', 'STDCNet', 'STDCContextPathNet', 'BEiT', 'MAE', 'PIDNet', 'MSCAN',
-    'DDRNet', 'VPD', 'PIDNetImprovedGhostConv', 'PIDNetImprovedGhostConvBagDappm', 'PIDNetSPPF'
+    'DDRNet', 'VPD', 'PIDNetImprovedGhostConv', 'PIDNetImprovedGhostConvBagDappm', 'PIDNetSPPF', 'FasterPIDNet', 'FasterPIDNet_P', 'ESPIDNet'
 ]
