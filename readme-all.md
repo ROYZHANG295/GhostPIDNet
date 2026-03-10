@@ -399,41 +399,64 @@ python benchmark_cpu_final.py configs/pidnet/pidnet-improved_ghost_conv_s_2xb6-1
 python benchmark_cpu_final.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes/iter_120000.pth --threads 1 --height 512 --width 1024
 
 python benchmark_cpu_final.py configs/pidnet/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py work_dirs/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_120000.pth --threads 1 --height 512 --width 1024
-============================================
-Model: ghost_pidnet.onnx
-Precision: FP16
-Resolution: 1024x2048
-Avg Latency: 4.41 ms
-FPS: 226.78
-============================================
+
+python benchmark_cpu_final.py configs/pidnet/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py work_dirs/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_1000.pth --threads 1 --height 512 --width 1024
+
+python benchmark_trt.py pidnet_s.onnx --fp16 --height 512 --width 1024
+python benchmark_trt.py faster_pidnet.onnx --fp16 --height 512 --width 1024
+python benchmark_trt.py spaceOptiConv_pidnet.onnx --fp16 --height 512 --width 1024
 
 ============================================
 Model: pidnet_s.onnx
 Precision: FP16
 Resolution: 1024x2048
-Avg Latency: 4.49 ms
-FPS: 222.83
+Avg Latency: 4.48 ms
+FPS: 223.03
+============================================
+============================================
+Model: faster_pidnet.onnx
+Precision: FP16
+Resolution: 1024x2048
+Avg Latency: 4.34 ms
+FPS: 230.54
+============================================
+============================================
+Model: spaceOptiConv_pidnet.onnx
+Precision: FP16
+Resolution: 1024x2048
+Avg Latency: 4.21 ms
+FPS: 237.70
+============================================
+
+
+============================================
+Model: spaceOptiConv_pidnet.onnx
+Precision: FP16
+Resolution: 512x1024
+Avg Latency: 1.38 ms
+FPS: 724.37
 ============================================
 
 ============================================
 Model: faster_pidnet.onnx
 Precision: FP16
-Resolution: 1024x2048
-Avg Latency: 4.36 ms
-FPS: 229.20
+Resolution: 512x1024
+Avg Latency: 1.38 ms
+FPS: 726.33
 ============================================
 
 ============================================
 Model: pidnet_s.onnx
 Precision: FP16
 Resolution: 512x1024
-Avg Latency: 1.42 ms
-FPS: 702.30
+Avg Latency: 1.43 ms
+FPS: 699.05
 ============================================
-
-python benchmark_trt.py pidnet_s.onnx --fp16
-python benchmark_trt.py faster_pidnet.onnx --fp16
-
 
 # 打印网络结构 
 python print_net.py > pid_faster_structure.txt
+
+# NCNN 编译
+cmake -DCMAKE_TOOLCHAIN_FILE="/home/tstone10/android-ndk/android-ndk-r25b/build/cmake/android.toolchain.cmake" -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-24 -DANDROID_STL=c++_static -DNCNN_BUILD_BENCHMARK=ON  -DNCNN_BUILD_EXAMPLES=OFF -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release ..
+
+make -j$(nproc)
