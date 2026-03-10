@@ -456,7 +456,7 @@ FPS: 699.05
 # 打印网络结构 
 python print_net.py > pid_faster_structure.txt
 
-# NCNN 编译
+# NCNN 编译 带benchmark 
 cmake -DCMAKE_TOOLCHAIN_FILE="/home/tstone10/android-ndk/android-ndk-r25b/build/cmake/android.toolchain.cmake" -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-24 -DANDROID_STL=c++_static -DNCNN_BUILD_BENCHMARK=ON  -DNCNN_BUILD_EXAMPLES=OFF -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release ..
 
 make -j$(nproc)

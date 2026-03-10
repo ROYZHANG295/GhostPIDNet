@@ -37,7 +37,7 @@ def export_onnx(config_path, checkpoint_path, output_file):
     # 4. 创建虚拟输入 (根据你的训练尺寸修改，比如 1, 3, 1024, 1024)
     # PIDNet-S 常用尺寸: 1024x1024 或 2048x1024 (Cityscapes)
     # 这里我们用 1, 3, 768, 768 做演示，请根据你的 config 修改！
-    input_shape = (1, 3, 1024, 1024) 
+    input_shape = (1, 3, 512, 1024) 
     dummy_input = torch.randn(input_shape)
 
     # 5. 导出 ONNX
@@ -62,18 +62,18 @@ if __name__ == '__main__':
     # 替换为你自己的路径mmsegmentation/configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py
     # CONFIG = 'configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py'
     # CHECKPOINT = 'work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes/iter_120000.pth' # 你的权重文件
-    # OUTPUT = 'pidnet_s.onnx'
+    # OUTPUT = 'pidnet_s-512-1024.onnx'
 
     # CONFIG = 'configs/pidnet/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes.py'
     # CHECKPOINT = 'work_dirs/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_120000.pth' # 你的权重文件
-    # OUTPUT = 'ghost_pidnet.onnx'
+    # OUTPUT = 'ghost_pidnet-512-1024.onnx'
 
     # CONFIG = 'configs/pidnet/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py'
     # CHECKPOINT = 'work_dirs/pidnet-faster-pconv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_1000.pth'
-    # OUTPUT = 'faster_pidnet.onnx'
+    # OUTPUT = 'faster_pidnet-512-1024.onnx'
 
-    CONFIG = 'configs/pidnet/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py'
-    CHECKPOINT = 'work_dirs/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_1000.pth'
-    OUTPUT = 'spaceOptiConv_pidnet.onnx'
+    # CONFIG = 'configs/pidnet/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class.py'
+    # CHECKPOINT = 'work_dirs/pidnet-faster-SpaceOptiConv-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/iter_1000.pth'
+    # OUTPUT = 'spaceOptiConv_pidnet-512-1024.onnx'
 
     export_onnx(CONFIG, CHECKPOINT, OUTPUT)
