@@ -462,6 +462,12 @@ cmake -DCMAKE_TOOLCHAIN_FILE="/home/tstone10/android-ndk/android-ndk-r25b/build/
 make -j$(nproc)
 
 # Jetson 测速
+export PATH=$PATH:/usr/src/tensorrt/bin
+
+trtexec --onnx=spaceOptiConv_pidnet.onnx --saveEngine=spaceOptiConv_pidnet.trt --fp16 --shapes=input:1x3x512x1024 --verbose
+
+trtexec --loadEngine=spaceOptiConv_pidnet.trt --avgRuns=100 --duration=10 --useCudaGraph
+
 # 建议使用这个命令，包含所有优化选项
 /usr/src/tensorrt/bin/trtexec \
     --onnx=pidnet.onnx \
@@ -478,3 +484,4 @@ make -j$(nproc)
     --avgRuns=100 \
     --duration=10 \
     --useCudaGraph    
+
