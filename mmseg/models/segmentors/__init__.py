@@ -9,10 +9,10 @@ from .pidnet_distill_wrapper import PIDNetDistillerWrapper
 from .pidnet_distill_I_branch_wrapper import PIDNetDistillerIBranchWrapper
 from .distill_losses import KLDivergence, ChannelWiseDivergence
 from .distill_model import EncoderDecoderKD
-# from .distill_encoder_decoder import DistillPIDNet
+from .pidnet_distiller_responsed import PIDNetDistiller
 
 __all__ = [
     'BaseSegmentor', 'EncoderDecoder', 'CascadeEncoderDecoder', 'SegTTAModel',
     'MultimodalEncoderDecoder', 'DepthEstimator', 'PIDNetDistillerWrapper', 'PIDNetDistillerIBranchWrapper', 
-    'KLDivergence', 'ChannelWiseDivergence', 'EncoderDecoderKD'
+    'KLDivergence', 'ChannelWiseDivergence', 'EncoderDecoderKD', 'PIDNetDistiller'
 ]

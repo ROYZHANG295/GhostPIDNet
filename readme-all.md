@@ -460,3 +460,21 @@ python print_net.py > pid_faster_structure.txt
 cmake -DCMAKE_TOOLCHAIN_FILE="/home/tstone10/android-ndk/android-ndk-r25b/build/cmake/android.toolchain.cmake" -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-24 -DANDROID_STL=c++_static -DNCNN_BUILD_BENCHMARK=ON  -DNCNN_BUILD_EXAMPLES=OFF -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=Release ..
 
 make -j$(nproc)
+
+# Jetson 测速
+# 建议使用这个命令，包含所有优化选项
+/usr/src/tensorrt/bin/trtexec \
+    --onnx=pidnet.onnx \
+    --saveEngine=pidnet.trt \
+    --fp16 \
+    --workspace=4096 \
+    --timingCacheFile=./timing.cache \
+    --verbose   # 加上这个可以看到更详细的进度
+
+# 标准测速 (论文用这个)
+/usr/src/tensorrt/bin/trtexec \
+    --loadEngine=pidnet.trt \
+    --fp16 \
+    --avgRuns=100 \
+    --duration=10 \
+    --useCudaGraph    
