@@ -188,6 +188,7 @@ python tools/train.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-tsp6k-2.py
 python tools/analysis_tools/benchmark.py configs/pidnet/pidnet-l_2xb6-120k_1024x1024-cityscapes.py /work_dirs/pidnet-l_2xb6-120k_1024x1024-cityscapes/last_checkpoint
 python tools/analysis_tools/benchmark.py configs/pidnet/pidnet-m_2xb6-120k_1024x1024-cityscapes.py /work_dirs/pidnet-m_2xb6-120k_1024x1024-cityscapes/last_checkpoint
 python tools/analysis_tools/benchmark.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes.py /work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes/last_checkpoint
+python tools/analysis_tools/benchmark.py configs/pidnet/pidnet-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class-ca-ppm-pag.py /work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class-ca-ppm-pag/last_checkpoint
 
 Done image [50 / 200], fps: 58.68 img / s
 Done image [100/ 200], fps: 58.61 img / s
