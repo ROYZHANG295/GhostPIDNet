@@ -61,7 +61,7 @@ model = dict(
             # 👇👇👇 修改这里 👇👇👇
             dict(
                 type='LaplacianEdgeLoss', # 使用我们新写的类名
-                loss_weight=20.0,         # 权重保持 20.0，边缘监督需要大权重
+                loss_weight=1.0,         # 权重保持 20.0，边缘监督需要大权重
                 kernel_size=5,            # 核大小
                 sigma=1.0,                # 边缘粗细控制
                 use_soft_label=True),     # 开启软标签，效果更好
