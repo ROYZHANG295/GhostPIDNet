@@ -34,7 +34,7 @@ model = dict(
         align_corners=False,
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
-        # init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
+        init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
         ),
     decode_head=dict(
         type='PIDHead',
@@ -56,17 +56,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            # dict(type='BoundaryLoss', loss_weight=20.0),
-            
-            # 👇👇👇 修改这里 👇👇👇
-            dict(
-                type='LaplacianEdgeLoss', # 使用我们新写的类名
-                loss_weight=0.8,         # 权重保持 20.0，边缘监督需要大权重
-                kernel_size=5,            # 核大小
-                sigma=1.0,                # 边缘粗细控制
-                use_soft_label=True),     # 开启软标签，效果更好
-            # 👆👆👆 修改结束 👆👆👆
-            
+            dict(type='BoundaryLoss', loss_weight=20.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
