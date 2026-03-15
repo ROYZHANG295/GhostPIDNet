@@ -34,7 +34,7 @@ model = dict(
         align_corners=False,
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
-        init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
+        init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)
         ),
     decode_head=dict(
         type='PIDHead',
