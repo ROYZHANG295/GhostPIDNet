@@ -34,6 +34,8 @@ from .pidnet_ca import PIDNetCA
 from .pidnet_ca_ppm_pag import PIDNetCAPpmPag
 from .pidnet_laplacian_add_I import PIDNetLaplacianAddI
 from .pidnet_laplacian_attention_I import PIDNetLaplacianAttentionI
+from .ddrnet_laplacian_attention_S import DDRNetLaplacianAttentionS
+
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
     'ResNeSt', 'MobileNetV2', 'UNet', 'CGNet', 'MobileNetV3',
@@ -42,5 +44,5 @@ __all__ = [
     'SVT', 'STDCNet', 'STDCContextPathNet', 'BEiT', 'MAE', 'PIDNet', 'MSCAN',
     'DDRNet', 'VPD', 'PIDNetImprovedGhostConv', 'PIDNetImprovedGhostConvBagDappm', 
     'PIDNetSPPF', 'FasterPIDNet', 'FasterPIDNet_P', 'ESPIDNet', 'PIDNetCA', 'PIDNetCAPpmPag', 
-    'PIDNetLaplacianAddI', 'PIDNetLaplacianAttentionI'
+    'PIDNetLaplacianAddI', 'PIDNetLaplacianAttentionI', 'DDRNetLaplacianAttentionS'
 ]
