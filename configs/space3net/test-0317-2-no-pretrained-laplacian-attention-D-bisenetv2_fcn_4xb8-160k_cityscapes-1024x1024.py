@@ -120,7 +120,7 @@ model = dict(
             128,
         ),
         semantic_expansion_ratio=6,
-        type='BiSeNetV2'),
+        type='BiSeNetV2LaplacianAttentionD'),
     data_preprocessor=dict(
         bgr_to_rgb=True,
         mean=[

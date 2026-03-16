@@ -37,6 +37,7 @@ from .pidnet_laplacian_attention_I import PIDNetLaplacianAttentionI
 from .ddrnet_laplacian_attention_S import DDRNetLaplacianAttentionS
 from .pidnet_laplacian_attention_I_zero import PIDNetLaplacianAttentionIZero
 from .pidnet_laplacian_attention_D import PIDNetLaplacianAttentionD
+from .bisenetv2_laplacian_attention_D import BiSeNetV2LaplacianAttentionD
 
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
@@ -47,5 +48,5 @@ __all__ = [
     'DDRNet', 'VPD', 'PIDNetImprovedGhostConv', 'PIDNetImprovedGhostConvBagDappm', 
     'PIDNetSPPF', 'FasterPIDNet', 'FasterPIDNet_P', 'ESPIDNet', 'PIDNetCA', 'PIDNetCAPpmPag', 
     'PIDNetLaplacianAddI', 'PIDNetLaplacianAttentionI', 'DDRNetLaplacianAttentionS', 'PIDNetLaplacianAttentionIZero',
-    'PIDNetLaplacianAttentionD'
+    'PIDNetLaplacianAttentionD', 'BiSeNetV2LaplacianAttentionD'
 ]
