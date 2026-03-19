@@ -1,3 +1,24 @@
+class_weight = [
+    0.8373,
+    0.918,
+    0.866,
+    1.0345,
+    1.0166,
+    0.9969,
+    0.9754,
+    1.0489,
+    0.8786,
+    1.0023,
+    0.9539,
+    0.9843,
+    1.1116,
+    0.9037,
+    1.0865,
+    1.0955,
+    1.0865,
+    1.1529,
+    1.0507,
+]
 crop_size = (
     1024,
     1024,
@@ -24,7 +45,9 @@ data_preprocessor = dict(
 data_root = 'data/cityscapes/'
 dataset_type = 'CityscapesDataset'
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=16000, type='CheckpointHook'),
+    checkpoint=dict(
+        by_epoch=False, interval=1000, save_best='mIoU',
+        type='CheckpointHook'),
     logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
@@ -43,84 +66,21 @@ img_ratios = [
     1.5,
     1.75,
 ]
+iters = 120000
 load_from = None
 log_level = 'INFO'
 log_processor = dict(by_epoch=False)
 model = dict(
-    auxiliary_head=[
-        dict(
-            align_corners=False,
-            channels=16,
-            concat_input=False,
-            in_channels=16,
-            in_index=1,
-            loss_decode=dict(
-                loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
-            norm_cfg=dict(requires_grad=True, type='SyncBN'),
-            num_classes=19,
-            num_convs=2,
-            type='FCNHead'),
-        dict(
-            align_corners=False,
-            channels=64,
-            concat_input=False,
-            in_channels=32,
-            in_index=2,
-            loss_decode=dict(
-                loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
-            norm_cfg=dict(requires_grad=True, type='SyncBN'),
-            num_classes=19,
-            num_convs=2,
-            type='FCNHead'),
-        dict(
-            align_corners=False,
-            channels=256,
-            concat_input=False,
-            in_channels=64,
-            in_index=3,
-            loss_decode=dict(
-                loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
-            norm_cfg=dict(requires_grad=True, type='SyncBN'),
-            num_classes=19,
-            num_convs=2,
-            type='FCNHead'),
-        dict(
-            align_corners=False,
-            channels=1024,
-            concat_input=False,
-            in_channels=128,
-            in_index=4,
-            loss_decode=dict(
-                loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
-            norm_cfg=dict(requires_grad=True, type='SyncBN'),
-            num_classes=19,
-            num_convs=2,
-            type='FCNHead'),
-    ],
     backbone=dict(
+        act_cfg=dict(inplace=True, type='ReLU'),
         align_corners=False,
-        bga_channels=128,
-        detail_channels=(
-            64,
-            64,
-            128,
-        ),
-        init_cfg=None,
-        out_indices=(
-            0,
-            1,
-            2,
-            3,
-            4,
-        ),
-        semantic_channels=(
-            16,
-            32,
-            64,
-            128,
-        ),
-        semantic_expansion_ratio=6,
-        type='BiSeNetV2'),
+        channels=32,
+        in_channels=3,
+        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        num_branch_blocks=3,
+        num_stem_blocks=2,
+        ppm_channels=96,
+        type='PIDNetLaplacianAttentionIZero'),
     data_preprocessor=dict(
         bgr_to_rgb=True,
         mean=[
@@ -141,38 +101,91 @@ model = dict(
         ],
         type='SegDataPreProcessor'),
     decode_head=dict(
-        align_corners=False,
-        channels=1024,
-        concat_input=False,
-        dropout_ratio=0.1,
+        act_cfg=dict(inplace=True, type='ReLU'),
+        align_corners=True,
+        channels=128,
         in_channels=128,
-        in_index=0,
-        loss_decode=dict(
-            loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
+        loss_decode=[
+            dict(loss_weight=0.4, type='CrossEntropyLoss', use_sigmoid=False),
+            dict(
+                class_weight=[
+                    0.8373,
+                    0.918,
+                    0.866,
+                    1.0345,
+                    1.0166,
+                    0.9969,
+                    0.9754,
+                    1.0489,
+                    0.8786,
+                    1.0023,
+                    0.9539,
+                    0.9843,
+                    1.1116,
+                    0.9037,
+                    1.0865,
+                    1.0955,
+                    1.0865,
+                    1.1529,
+                    1.0507,
+                ],
+                loss_weight=1.0,
+                min_kept=131072,
+                thres=0.9,
+                type='OhemCrossEntropy'),
+            dict(loss_weight=20.0, type='BoundaryLoss'),
+            dict(
+                class_weight=[
+                    0.8373,
+                    0.918,
+                    0.866,
+                    1.0345,
+                    1.0166,
+                    0.9969,
+                    0.9754,
+                    1.0489,
+                    0.8786,
+                    1.0023,
+                    0.9539,
+                    0.9843,
+                    1.1116,
+                    0.9037,
+                    1.0865,
+                    1.0955,
+                    1.0865,
+                    1.1529,
+                    1.0507,
+                ],
+                loss_weight=1.0,
+                min_kept=131072,
+                thres=0.9,
+                type='OhemCrossEntropy'),
+        ],
         norm_cfg=dict(requires_grad=True, type='SyncBN'),
         num_classes=19,
-        num_convs=1,
-        type='FCNHead'),
-    pretrained=None,
+        type='PIDHead'),
     test_cfg=dict(mode='whole'),
     train_cfg=dict(),
     type='EncoderDecoder')
 norm_cfg = dict(requires_grad=True, type='SyncBN')
 optim_wrapper = dict(
     clip_grad=None,
-    optimizer=dict(lr=0.05, momentum=0.9, type='SGD', weight_decay=0.0005),
+    optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
     type='OptimWrapper')
-optimizer = dict(lr=0.05, momentum=0.9, type='SGD', weight_decay=0.0005)
+optimizer = dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005)
 param_scheduler = [
-    dict(begin=0, by_epoch=False, end=1000, start_factor=0.1, type='LinearLR'),
     dict(
-        begin=1000,
+        begin=0, by_epoch=False, end=3000, start_factor=1e-06,
+        type='LinearLR'),
+    dict(
+        begin=3000,
         by_epoch=False,
-        end=160000,
-        eta_min=0.0001,
+        end=120000,
+        eta_min=0,
         power=0.9,
         type='PolyLR'),
 ]
+randomness = dict(seed=304)
 resume = False
 test_cfg = dict(type='TestLoop')
 test_dataloader = dict(
@@ -187,6 +200,7 @@ test_dataloader = dict(
                 2048,
                 1024,
             ), type='Resize'),
+            dict(pad_val=0, size_divisor=32, type='Pad'),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs'),
         ],
@@ -204,13 +218,14 @@ test_pipeline = [
         2048,
         1024,
     ), type='Resize'),
+    dict(pad_val=0, size_divisor=32, type='Pad'),
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs'),
 ]
 train_cfg = dict(
-    max_iters=160000, type='IterBasedTrainLoop', val_interval=16000)
+    max_iters=120000, type='IterBasedTrainLoop', val_interval=1000)
 train_dataloader = dict(
-    batch_size=8,
+    batch_size=6,
     dataset=dict(
         data_prefix=dict(
             img_path='leftImg8bit/train', seg_map_path='gtFine/train'),
@@ -238,10 +253,12 @@ train_dataloader = dict(
                 type='RandomCrop'),
             dict(prob=0.5, type='RandomFlip'),
             dict(type='PhotoMetricDistortion'),
+            dict(edge_width=4, type='GenerateEdge'),
+            dict(sigma=3.0, type='DistanceTransformEdge'),
             dict(type='PackSegInputs'),
         ],
         type='CityscapesDataset'),
-    num_workers=4,
+    num_workers=2,
     persistent_workers=True,
     sampler=dict(shuffle=True, type='InfiniteSampler'))
 train_pipeline = [
@@ -264,6 +281,8 @@ train_pipeline = [
     ), type='RandomCrop'),
     dict(prob=0.5, type='RandomFlip'),
     dict(type='PhotoMetricDistortion'),
+    dict(edge_width=4, type='GenerateEdge'),
+    dict(sigma=3.0, type='DistanceTransformEdge'),
     dict(type='PackSegInputs'),
 ]
 tta_model = dict(type='SegTTAModel')
@@ -305,6 +324,7 @@ val_dataloader = dict(
                 2048,
                 1024,
             ), type='Resize'),
+            dict(pad_val=0, size_divisor=32, type='Pad'),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs'),
         ],
