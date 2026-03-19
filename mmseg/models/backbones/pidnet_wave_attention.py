@@ -13,110 +13,76 @@ from mmseg.registry import MODELS
 from mmseg.utils import OptConfigType
 from ..utils import DAPPM, PAPPM, BasicBlock, Bottleneck
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+class WaveletSemanticAttention(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 🌟 修复：改为 0.25，确保是均值滤波，与原图 x 尺度对齐
+        weight_ll = torch.tensor(
+            [[0.25, 0.25], [0.25, 0.25]], dtype=torch.float32
+        ).view(1, 1, 2, 2)
+        self.register_buffer('weight_ll', weight_ll)
+        self.scale = nn.Parameter(torch.tensor(-4.0))
 
-class GraphicLaplacianAttention(nn.Module):
-    def __init__(self, pool_size: int = 16):
-        super(GraphicLaplacianAttention, self).__init__()
-        self.m_r = 1.0
-        self.m_sigma = 0.5
-        # [修复 3] pool_size 作为参数，避免硬编码
-        self.pool_size = pool_size
-        # k_c: sigmoid(0.0)=0.5，初始通道/空间各占 50%
-        self.k_c = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
-        # [修复 3] gamma 使用真标量，避免广播歧义
-        self.gamma = nn.Parameter(torch.zeros((), dtype=torch.float32))
-        # [修复 1] 缓存单位矩阵，避免每次 forward 重复创建
-        self._eye_cache = {}
-
-    def _get_eye(self, C: int, device: torch.device) -> torch.Tensor:
-        """延迟缓存 eye 矩阵，同一 (C, device) 组合只创建一次"""
-        key = (C, str(device))
-        if key not in self._eye_cache:
-            self._eye_cache[key] = torch.eye(C, device=device).unsqueeze(0)
-        return self._eye_cache[key]
-
-    def _gaussian_kernel(self, dist, r, sigma):
-        return torch.exp(
-            -torch.square(dist - r) / (2 * torch.square(sigma) + 1e-8)
-        )
-
-    def _laplacian_channel_residual(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         B, C, H, W = x.shape
-        x_flat = x.view(B, C, -1)
 
-        c_max = torch.max(x_flat, dim=2)[0]
-        c_max = torch.sigmoid(c_max)
+        pad_h = H % 2
+        pad_w = W % 2
+        x_padded = F.pad(x, (0, pad_w, 0, pad_h), mode='replicate')
+        x_reshaped = x_padded.reshape(B * C, 1, H + pad_h, W + pad_w)
 
-        c_min = 1 - c_max
-        c_max_exp = c_max.unsqueeze(2)
-        c_min_exp = c_min.unsqueeze(1)
-        d_c = F.normalize(c_max_exp + c_min_exp, p=2, dim=1)
+        ll = F.conv2d(x_reshaped, self.weight_ll, stride=2)
+        ll_up = F.interpolate(ll, size=(H, W), mode='bilinear', align_corners=False)
+        ll_up = ll_up.reshape(B, C, H, W)
 
-        r = torch.min(torch.diagonal(d_c, dim1=1, dim2=2), dim=1)[0]
-        r = torch.clamp(r, max=self.m_r)
-        sigma = torch.clamp(torch.min(d_c, dim=2)[0], min=self.m_sigma)
+        diff = torch.abs(ll_up - x)
+        
+        mu = diff.mean(dim=(2, 3), keepdim=True)
+        sigma = diff.std(dim=(2, 3), keepdim=True).clamp(min=1e-5)
+        
+        # diff 越小（越平坦），-(diff - mu)/sigma 越大，sigmoid 后越接近 1
+        attn = torch.sigmoid(-(diff - mu) / sigma)
 
-        c_max_3d = c_max.unsqueeze(-1)
-        dist_c = torch.cdist(c_max_3d, c_max_3d, p=2)
+        return x + x * attn * torch.sigmoid(self.scale)
 
-        r_exp = r.view(B, 1, 1)
-        sigma_exp = sigma.view(B, C, 1)
-        g_c = self._gaussian_kernel(dist_c, r_exp, sigma_exp)
 
-        g_c_sq = torch.square(g_c)
-        sum_dim2 = torch.sum(g_c_sq, dim=2, keepdim=True)
-        sum_dim1 = torch.sum(g_c_sq, dim=1, keepdim=True)
-        a_c_raw = torch.sqrt(sum_dim2 + sum_dim1 + 1e-8)
-        a_c = (a_c_raw + a_c_raw.transpose(1, 2)) / 2
+class WaveletBoundaryAttention(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 高通滤波器求和为 0，不受绝对尺度影响，保持 0.5 即可
+        weight_lh = torch.tensor([[-0.5, -0.5], [0.5, 0.5]], dtype=torch.float32).view(1, 1, 2, 2)
+        weight_hl = torch.tensor([[-0.5, 0.5], [-0.5, 0.5]], dtype=torch.float32).view(1, 1, 2, 2)
+        weight_hh = torch.tensor([[0.5, -0.5], [-0.5, 0.5]], dtype=torch.float32).view(1, 1, 2, 2)
 
-        # [修复 1] 使用缓存的 eye 矩阵
-        eye = self._get_eye(C, x.device)
-        laplacian_c = c_max.unsqueeze(-1) * (eye + a_c)
+        self.register_buffer('weight_lh', weight_lh)
+        self.register_buffer('weight_hl', weight_hl)
+        self.register_buffer('weight_hh', weight_hh)
+        self.scale = nn.Parameter(torch.tensor(-4.0))
 
-        x_channel = laplacian_c @ x_flat
-        return x_channel.view(B, C, H, W)
-
-    def _laplacian_spatial_residual(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         B, C, H, W = x.shape
-        P = self.pool_size
 
-        x_pooled = F.adaptive_avg_pool2d(x, (P, P))
-        x_avg = torch.mean(x_pooled, dim=1, keepdim=True)
-        x_spatial_T = x_avg.view(B, P * P, 1)  # [B, P*P, 1]
+        pad_h = H % 2
+        pad_w = W % 2
+        x_padded = F.pad(x, (0, pad_w, 0, pad_h), mode='replicate')
+        x_reshaped = x_padded.reshape(B * C, 1, H + pad_h, W + pad_w)
 
-        # [修复 2] 统一用 dist_s（欧氏距离）估算 r 和 sigma，消除量纲不一致
-        dist_s = torch.cdist(x_spatial_T, x_spatial_T, p=2)  # [B, P*P, P*P]
+        lh = F.conv2d(x_reshaped, self.weight_lh, stride=2)
+        hl = F.conv2d(x_reshaped, self.weight_hl, stride=2)
+        hh = F.conv2d(x_reshaped, self.weight_hh, stride=2)
 
-        r = torch.min(torch.diagonal(dist_s, dim1=1, dim2=2), dim=1)[0]
-        r = torch.clamp(r, max=self.m_r)
-        sigma = torch.clamp(torch.min(dist_s, dim=2)[0], min=self.m_sigma)
+        mag = torch.sqrt(lh**2 + hl**2 + hh**2 + 1e-8)
+        mag_up = F.interpolate(mag, size=(H, W), mode='bilinear', align_corners=False)
+        mag_up = mag_up.reshape(B, C, H, W)
 
-        r_exp = r.view(B, 1, 1)
-        sigma_exp = sigma.unsqueeze(1)
-        g_s = self._gaussian_kernel(dist_s, r_exp, sigma_exp)
-        a_s = F.softmax(g_s, dim=2)
+        mu = mag_up.mean(dim=(2, 3), keepdim=True)
+        sigma = mag_up.std(dim=(2, 3), keepdim=True).clamp(min=1e-5)
+        
+        # mag 越大（边界越强），(mag - mu)/sigma 越大，sigmoid 后越接近 1
+        attn = torch.sigmoid((mag_up - mu) / sigma)
 
-        x_flat_pooled = x_pooled.view(B, C, -1)
-        x_spatial_enhance = torch.bmm(x_flat_pooled, a_s)
-        x_spatial_enhance = x_spatial_enhance.view(B, C, P, P)
-        x_spatial_enhance = F.interpolate(
-            x_spatial_enhance, size=(H, W), mode='bilinear', align_corners=False
-        )
-        return x_spatial_enhance
+        return x + x * attn * torch.sigmoid(self.scale)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x_c = self._laplacian_channel_residual(x)
-        x_s = self._laplacian_spatial_residual(x)
-
-        weight_c = torch.sigmoid(self.k_c)
-        weight_s = 1.0 - weight_c
-
-        attn_out = (weight_c * x_c) + (weight_s * x_s)
-        # [修复 3] gamma 为真标量，广播行为清晰明确
-        return x + self.gamma * attn_out
 
 
 class PagFM(BaseModule):
@@ -302,7 +268,7 @@ class LightBag(BaseModule):
 
 
 @MODELS.register_module()
-class PIDNetGraphicLaplacianAttentionI(BaseModule):
+class PIDNetWaveAttentionDI(BaseModule):
     """PIDNet backbone.
 
     This backbone is the implementation of `PIDNet: A Real-time Semantic
@@ -352,9 +318,10 @@ class PIDNetGraphicLaplacianAttentionI(BaseModule):
         self.relu = nn.ReLU()
 
         # =====================================================================
-        # [新增] 初始化 Laplacian Attention 实例 (0参数，全网可共享)
+        # [新增] 实例化王炸组合：双频小波路由器
         # =====================================================================
-        self.la = GraphicLaplacianAttention()
+        self.wlsa = WaveletSemanticAttention()  # 供 I 分支使用
+        self.whba = WaveletBoundaryAttention()  # 供 D 分支使用
 
         # I Branch
         self.i_branch_layers = nn.ModuleList()
@@ -587,11 +554,15 @@ class PIDNetGraphicLaplacianAttentionI(BaseModule):
 
         # stage 3
         x_i = self.relu(self.i_branch_layers[0](x))
-
-        x_i = self.la(x_i)  # [新增] 在 Stage 3 增强 I 分支
+        
+        # I 分支：提取特征后，立刻应用 WLSA (低频) 提纯语义
+        x_i = self.wlsa(x_i)
 
         x_p = self.p_branch_layers[0](x)
         x_d = self.d_branch_layers[0](x)
+
+        # D 分支：提取特征后，立刻应用 WHBA (高频) 提纯边界
+        x_d = self.whba(x_d)
 
         comp_i = self.compression_1(x_i)
         x_p = self.pag_1(x_p, comp_i)
@@ -606,10 +577,14 @@ class PIDNetGraphicLaplacianAttentionI(BaseModule):
 
         # stage 4
         x_i = self.relu(self.i_branch_layers[1](x_i))
-        x_i = self.la(x_i)  # [新增] 在 Stage 4 增强 I 分支
+        # I 分支：增强低频语义
+        x_i = self.wlsa(x_i)
 
         x_p = self.p_branch_layers[1](self.relu(x_p))
         x_d = self.d_branch_layers[1](self.relu(x_d))
+
+        # D 分支：增强高频边界
+        x_d = self.whba(x_d)
 
         comp_i = self.compression_2(x_i)
         x_p = self.pag_2(x_p, comp_i)
@@ -624,10 +599,13 @@ class PIDNetGraphicLaplacianAttentionI(BaseModule):
 
         # stage 5
         x_i = self.i_branch_layers[2](x_i)
-        x_i = self.la(x_i)  # [新增] 在 Stage 5 增强 I 分支
+        # I 分支：增强低频语义 (在进入 SPP 多尺度池化前进行提纯)
+        x_i = self.wlsa(x_i)
 
         x_p = self.p_branch_layers[2](self.relu(x_p))
         x_d = self.d_branch_layers[2](self.relu(x_d))
+        # D 分支：增强高频边界
+        x_d = self.whba(x_d)
 
         x_i = self.spp(x_i)
         x_i = F.interpolate(

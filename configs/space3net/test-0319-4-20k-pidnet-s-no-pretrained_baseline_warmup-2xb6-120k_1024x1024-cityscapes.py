@@ -25,7 +25,7 @@ model = dict(
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
     backbone=dict(
-        type='PIDNetGraphicLaplacianAttentionI',
+        type='PIDNet',
         in_channels=3,
         channels=32,
         ppm_channels=96,
@@ -83,7 +83,8 @@ train_pipeline = [
 ]
 train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
 
-iters = 120000
+# iters = 120000
+iters = 20000
 # optimizer
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
@@ -96,7 +97,7 @@ param_scheduler = [
         start_factor=1e-6,
         by_epoch=False,
         begin=0,
-        end=3000),  # 建议设为 3000，稳一点
+        end=800),  # 建议设为 3000，稳一点
     
     # 2. 正式训练阶段 (Poly Decay)
     # 从第 3000 次迭代开始，使用 Poly 策略衰减
@@ -104,13 +105,13 @@ param_scheduler = [
         type='PolyLR',
         eta_min=0,
         power=0.9,
-        begin=3000, # 接上 Warmup 的结束时间
+        begin=800, # 接上 Warmup 的结束时间
         end=iters,
         by_epoch=False)
 ]
 # training schedule for 120k
 train_cfg = dict(
-    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 120)
+    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 20)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
@@ -118,12 +119,11 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(
-        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=iters // 120),
+        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=iters // 20),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 
-# randomness = dict(seed=304)
-randomness = dict(seed=42)
+randomness = dict(seed=304)
 
 # ================= v1.x 最终修正版 (复制这个) =================
 
