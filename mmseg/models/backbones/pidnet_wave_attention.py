@@ -51,7 +51,7 @@ class WaveletSemanticAttention(nn.Module):
         # 🌟 新增：在训练模式下，且还没保存过时，执行保存
         if self.training:
             self.step_counter += 1
-            if self.step_counter == 1000:  # 等网络学了一段时间后再看
+            if self.step_counter == 6000:  # 等网络学了一段时间后再看
                 self._save_heatmap(attn, "wavelet_semantic_low_freq.png")
 
         return x + x * attn * torch.sigmoid(self.scale)
@@ -116,7 +116,7 @@ class WaveletBoundaryAttention(nn.Module):
         # 🌟 新增：在训练模式下，且还没保存过时，执行保存
         if self.training:
             self.step_counter += 1
-            if self.step_counter == 1000:  # 等网络学了一段时间后再看
+            if self.step_counter == 6000:  # 等网络学了一段时间后再看
                 self._save_heatmap(attn, "wavelet_boundary_high_freq.png")
 
         return x + x * attn * torch.sigmoid(self.scale)
