@@ -43,6 +43,10 @@ from .pidnet_laplacian_attention_I_zero_norm import PIDNetLaplacianAttentionIZer
 from .pidnet_laplacian_attention_I_rgb import PIDNetLaplacianAttentionIRgb
 from .pidnet_graphic_laplacian_attention_I import PIDNetGraphicLaplacianAttentionI
 from .pidnet_wave_attention import PIDNetWaveAttentionDI
+from .pidnet_dual_laplacian_attention import PIDNetDualFreq
+from .pidnet_wave_attention_3_D import PIDNetWaveAttention3D
+from .pidnet_wave_attention_3_I import PIDNetWaveAttention3I
+from .pidnet_wave_attention_once_D_I import PIDNetWaveAttentionOnceDI
 
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
@@ -54,5 +58,6 @@ __all__ = [
     'PIDNetSPPF', 'FasterPIDNet', 'FasterPIDNet_P', 'ESPIDNet', 'PIDNetCA', 'PIDNetCAPpmPag', 
     'PIDNetLaplacianAddI', 'PIDNetLaplacianAttentionI', 'DDRNetLaplacianAttentionS', 'PIDNetLaplacianAttentionIZero',
     'PIDNetLaplacianAttentionD', 'BiSeNetV2LaplacianAttentionD', 'DDRNetLaplacianAttentionSZero', 'PIDNetLaplacianAttentionIZeroNorm',
-    'PIDNetLaplacianAttentionIRgb', 'PIDNetGraphicLaplacianAttentionI', 'PIDNetWaveAttentionDI'
+    'PIDNetLaplacianAttentionIRgb', 'PIDNetGraphicLaplacianAttentionI', 'PIDNetWaveAttentionDI', 'PIDNetDualFreq',
+    'PIDNetWaveAttention3D', 'PIDNetWaveAttention3I', 'PIDNetWaveAttentionOnceDI'
 ]
