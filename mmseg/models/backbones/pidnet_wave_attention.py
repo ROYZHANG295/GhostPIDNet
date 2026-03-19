@@ -8,6 +8,9 @@ from mmcv.cnn import ConvModule
 from mmengine.model import BaseModule
 from mmengine.runner import CheckpointLoader
 from torch import Tensor
+import cv2
+import numpy as np
+import os
 
 from mmseg.registry import MODELS
 from mmseg.utils import OptConfigType
@@ -22,6 +25,8 @@ class WaveletSemanticAttention(nn.Module):
         ).view(1, 1, 2, 2)
         self.register_buffer('weight_ll', weight_ll)
         self.scale = nn.Parameter(torch.tensor(-4.0))
+
+        self.step_counter = 0  # 🌟 改用计数器
 
     def forward(self, x):
         B, C, H, W = x.shape
@@ -43,8 +48,33 @@ class WaveletSemanticAttention(nn.Module):
         # diff 越小（越平坦），-(diff - mu)/sigma 越大，sigmoid 后越接近 1
         attn = torch.sigmoid(-(diff - mu) / sigma)
 
-        return x + x * attn * torch.sigmoid(self.scale)
+        # 🌟 新增：在训练模式下，且还没保存过时，执行保存
+        if self.training:
+            self.step_counter += 1
+            if self.step_counter == 1000:  # 等网络学了一段时间后再看
+                self._save_heatmap(attn, "wavelet_semantic_low_freq.png")
 
+        return x + x * attn * torch.sigmoid(self.scale)
+    
+    def _save_heatmap(self, attn, filename):
+        """将注意力张量转换为热力图并保存到本地"""
+        # 取 Batch 的第 0 张图，在通道维度求平均，并转到 CPU 转 numpy
+        attn_map = attn[0].mean(dim=0).detach().cpu().numpy()
+        
+        # 归一化到 0~1
+        attn_map = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min() + 1e-8)
+        # 转换为 0~255 的 uint8 格式
+        attn_map_uint8 = (attn_map * 255).astype(np.uint8)
+        
+        # 应用伪彩色 (Jet: 红高蓝低)
+        heatmap = cv2.applyColorMap(attn_map_uint8, cv2.COLORMAP_JET)
+        
+        # 创建文件夹并保存
+        save_dir = "wavelet_vis_results"
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, filename)
+        cv2.imwrite(save_path, heatmap)
+        print(f"\n[可视化导出] 成功保存小波语义注意力图至: {save_path}\n")
 
 class WaveletBoundaryAttention(nn.Module):
     def __init__(self):
@@ -58,6 +88,8 @@ class WaveletBoundaryAttention(nn.Module):
         self.register_buffer('weight_hl', weight_hl)
         self.register_buffer('weight_hh', weight_hh)
         self.scale = nn.Parameter(torch.tensor(-4.0))
+        
+        self.step_counter = 0  # 🌟 改用计数器
 
     def forward(self, x):
         B, C, H, W = x.shape
@@ -81,8 +113,26 @@ class WaveletBoundaryAttention(nn.Module):
         # mag 越大（边界越强），(mag - mu)/sigma 越大，sigmoid 后越接近 1
         attn = torch.sigmoid((mag_up - mu) / sigma)
 
-        return x + x * attn * torch.sigmoid(self.scale)
+        # 🌟 新增：在训练模式下，且还没保存过时，执行保存
+        if self.training:
+            self.step_counter += 1
+            if self.step_counter == 1000:  # 等网络学了一段时间后再看
+                self._save_heatmap(attn, "wavelet_boundary_high_freq.png")
 
+        return x + x * attn * torch.sigmoid(self.scale)
+    
+    def _save_heatmap(self, attn, filename):
+        """将注意力张量转换为热力图并保存到本地"""
+        attn_map = attn[0].mean(dim=0).detach().cpu().numpy()
+        attn_map = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min() + 1e-8)
+        attn_map_uint8 = (attn_map * 255).astype(np.uint8)
+        heatmap = cv2.applyColorMap(attn_map_uint8, cv2.COLORMAP_JET)
+        
+        save_dir = "wavelet_vis_results"
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, filename)
+        cv2.imwrite(save_path, heatmap)
+        print(f"\n[可视化导出] 成功保存小波边界注意力图至: {save_path}\n")
 
 
 class PagFM(BaseModule):

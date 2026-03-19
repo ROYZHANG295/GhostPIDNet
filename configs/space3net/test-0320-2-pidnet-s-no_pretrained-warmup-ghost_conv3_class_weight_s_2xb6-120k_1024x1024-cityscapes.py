@@ -1,0 +1,172 @@
+'''
+为了在 PIDNet 中集成 Ghost Convolution，我们需要做以下几步修改：
+
+新增 GhostModule 类：这是 Ghost Conv 的核心实现（一半卷积，一半深度可分离卷积）。
+新增 GhostBasicBlock 类：模仿 ResNet 的 BasicBlock，但将其内部的普通 Conv3x3 替换为 GhostModule。
+修改 PIDNetImprovedGhostConv 主类：
+仅将 I 分支 (Context Branch) 的 BasicBlock 替换为 GhostBasicBlock。
+P 分支 (Detail Branch) 和 D 分支 (Boundary Branch) 保持原样，以确保高频细节和边缘精度不丢失（这是 PIDNet 的灵魂）。
+'''
+_base_ = [
+    '../_base_/datasets/cityscapes_1024x1024.py',
+    '../_base_/default_runtime.py'
+]
+
+# The class_weight is borrowed from https://github.com/openseg-group/OCNet.pytorch/issues/14 # noqa
+# Licensed under the MIT License
+class_weight = [
+    0.8373, 0.918, 0.866, 1.0345, 1.0166, 0.9969, 0.9754, 1.0489, 0.8786,
+    1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
+    1.0507
+]
+
+# 1. 指定从 12万轮 的权重开始加载
+# load_from = 'checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000-miou-77.8.pth'
+
+# 2. 彻底关闭 resume (非常重要！)
+resume = False 
+
+# 3. 设置这就只是一个 12万轮 的新任务
+# 注意：这里不要写 240000，写 120000。
+# 因为计数器会归零，我们只需要让它再跑剩下的 12万轮 即可。
+
+# 4. (可选但推荐) 调整学习率
+# 因为你的模型已经有 75% mIoU 了，如果用初始的大学习率 (比如 0.01) 可能会震荡。
+# 建议把初始学习率调小 2~5 倍。
+
+# checkpoint_file = 'checkpoints/pidnet-improved_ghost_conv_class_weight_s_2xb6-120k_1024x1024-cityscapes/iter_240000-miou-77.8.pth'
+crop_size = (1024, 1024)
+data_preprocessor = dict(
+    type='SegDataPreProcessor',
+    mean=[123.675, 116.28, 103.53],
+    std=[58.395, 57.12, 57.375],
+    bgr_to_rgb=True,
+    pad_val=0,
+    seg_pad_val=255,
+    size=crop_size)
+norm_cfg = dict(type='SyncBN', requires_grad=True)
+model = dict(
+    type='EncoderDecoder',
+    data_preprocessor=data_preprocessor,
+    backbone=dict(
+        type='PIDNetImprovedGhostConv',
+        in_channels=3,
+        channels=32,
+        ppm_channels=96,
+        num_stem_blocks=2,
+        num_branch_blocks=3,
+        align_corners=False,
+        norm_cfg=norm_cfg,
+        act_cfg=dict(type='ReLU', inplace=True),
+        # init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)
+        ),
+    decode_head=dict(
+        type='PIDHead',
+        in_channels=128,
+        channels=128,
+        num_classes=19,
+        norm_cfg=norm_cfg,
+        act_cfg=dict(type='ReLU', inplace=True),
+        align_corners=True,
+        loss_decode=[
+            dict(
+                type='CrossEntropyLoss',
+                use_sigmoid=False,
+#                class_weight=class_weight,
+                loss_weight=0.4),
+            dict(
+                type='OhemCrossEntropy',
+                thres=0.9,
+                min_kept=131072,
+                class_weight=class_weight,
+                loss_weight=1.0),
+            dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(
+                type='OhemCrossEntropy',
+                thres=0.9,
+                min_kept=131072,
+                class_weight=class_weight,
+                loss_weight=1.0)
+        ]),
+        
+    train_cfg=dict(),
+    test_cfg=dict(mode='whole'))
+
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(
+        type='RandomResize',
+        scale=(2048, 1024),
+        ratio_range=(0.5, 2.0),
+        keep_ratio=True),
+    dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type='PhotoMetricDistortion'),
+    dict(type='GenerateEdge', edge_width=4),
+    dict(type='PackSegInputs')
+]
+train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
+
+iters = 120000
+
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+
+optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
+# learning policy
+param_scheduler = [
+    # 1. 热身阶段 (Warmup)
+    # 前 3000 次迭代，学习率从 1e-6 线性增加到 初始学习率
+    dict(
+        type='LinearLR',
+        start_factor=1e-6,
+        by_epoch=False,
+        begin=0,
+        end=3000),  # 建议设为 3000，稳一点
+    
+    # 2. 正式训练阶段 (Poly Decay)
+    # 从第 3000 次迭代开始，使用 Poly 策略衰减
+    dict(
+        type='PolyLR',
+        eta_min=0,
+        power=0.9,
+        begin=3000, # 接上 Warmup 的结束时间
+        end=iters,
+        by_epoch=False)
+]
+# training schedule for 120k
+train_cfg = dict(
+    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 120)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    checkpoint=dict(
+        type='CheckpointHook', by_epoch=False, interval=iters // 120),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    visualization=dict(type='SegVisualizationHook'))
+
+randomness = dict(seed=304)
+
+# ================= v1.x 最终修正版 (复制这个) =================
+
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+    
+    # --- 核心修改在这里 ---
+    # 1. 既然是 Demo 推理，不需要 pad 标签，所以去掉 seg_pad_val
+    # 2. 只需要 pad 图片 (pad_val=0) 并凑齐 32 倍数 (size_divisor=32)
+    dict(type='Pad', size_divisor=32, pad_val=0), 
+    # --------------------
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs')
+]
+
+# 覆盖 dataloader 里的 pipeline
+val_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+test_dataloader = dict(dataset=dict(pipeline=test_pipeline))
+
+# ================= 复制结束 =================
