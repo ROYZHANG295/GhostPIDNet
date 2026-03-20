@@ -6,13 +6,16 @@ import matplotlib.pyplot as plt
 # 格式: {"你想在图表上显示的标签名字": "对应的 scalars.json 路径"}
 # 支持任意数量，直接在下面加行即可！
 LOG_CONFIG = {
-    "Baseline (PIDNet)": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
+    #"Baseline (PIDNet)": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
     
-    "Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
+    #"Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
     
     # 如果你后续跑了消融实验，只需要取消下面注释并填上路径：
     # "Ours (Only I-Branch)": "work_dirs/你的I分支实验路径/vis_data/scalars.json",
     # "Ours (Only D-Branch)": "work_dirs/你的D分支实验路径/vis_data/scalars.json",
+    "Baseline": "work_dirs/test-0317-4-1-pidnet-s-no-pretrained_warmup-2xb6-120k_1024x1024-cityscapes-seed42/20260318_131542/vis_data/scalars.json",
+    "Wave I&D": "work_dirs/test-0320-4-1-120k-pidnet-s-no-pretrained-wave-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_234908/vis_data/scalars.json",
+    "Wave 3D": "work_dirs/test-0320-4-2-120k-pidnet-s-no-pretrained-wave-attention-3D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_235004/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
