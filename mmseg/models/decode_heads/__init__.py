@@ -37,6 +37,7 @@ from .uper_head import UPerHead
 from .vpd_depth_head import VPDDepthHead
 from .pid_head_laplacian import PIDHeadLaplacian
 from .pid_head_laplacian_opt3 import PIDHeadLaplacianOpt3
+from .pid_head_laplacian_opt3_dynamic import PIDHeadLaplacianOpt3Dynamic
 
 __all__ = [
     'FCNHead', 'PSPHead', 'ASPPHead', 'PSAHead', 'NLHead', 'GCHead', 'CCHead',
@@ -47,5 +48,5 @@ __all__ = [
     'SegformerHead', 'ISAHead', 'STDCHead', 'IterativeDecodeHead',
     'KernelUpdateHead', 'KernelUpdator', 'MaskFormerHead', 'Mask2FormerHead',
     'LightHamHead', 'PIDHead', 'DDRHead', 'VPDDepthHead', 'SideAdapterCLIPHead',
-    'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3'
+    'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic'
 ]

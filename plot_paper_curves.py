@@ -10,7 +10,7 @@ LOG_CONFIG = {
     # "Laplacian Loss": "work_dirs/test-0321-1-20k-pidnet-s-no-pretrained_laplacian_loss_warmup-2xb6-120k_1024x1024-cityscapes/20260320_042324/vis_data/scalars.json",
     # "Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
     "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
-    "Laplacian Loss":"work_dirs/test-0321-2-120k-pidnet-s-no-pretrained_laplacian_loss_warmup-2xb6-120k_1024x1024-cityscapes/20260320_100751/vis_data/scalars.json"
+    "Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
     # 如果你后续跑了消融实验，只需要取消下面注释并填上路径：
     # "Ours (Only I-Branch)": "work_dirs/你的I分支实验路径/vis_data/scalars.json",
     # "Ours (Only D-Branch)": "work_dirs/你的D分支实验路径/vis_data/scalars.json",
