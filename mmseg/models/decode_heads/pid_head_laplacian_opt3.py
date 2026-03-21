@@ -242,7 +242,7 @@ class PIDHeadLaplacianOpt3(BaseDecodeHead):
         dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
         
         # 混合 Loss：BCE 负责像素级分类，Dice 负责全局线条连贯性 (权重 10.0 可微调)
-        loss['loss_bd_laplacian'] = bce_loss + 10.0 * dice_loss
+        loss['loss_bd_laplacian'] = bce_loss + 3.0 * dice_loss
 
         # =================================================================
         # 🚀 涨点改进 3：降低边界引导的阈值 (0.8 -> 0.5)

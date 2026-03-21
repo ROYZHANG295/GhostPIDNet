@@ -56,7 +56,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(type='BoundaryLoss', loss_weight=1.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
