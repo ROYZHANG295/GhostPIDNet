@@ -10,7 +10,12 @@ LOG_CONFIG = {
     # "Laplacian Loss": "work_dirs/test-0321-1-20k-pidnet-s-no-pretrained_laplacian_loss_warmup-2xb6-120k_1024x1024-cityscapes/20260320_042324/vis_data/scalars.json",
     # "Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
     "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
-    "Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
+    #"Laplacian Loss Dynamic":"work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260321_223222/vis_data/scalars.json",
+    #"Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
+    "Laplacian Loss Dynamic 2": "work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260322_051110/vis_data/scalars.json",
+    
+    #"Distance Lap": "work_dirs/test-0318-2-pidnet-s-no-pretrained-distance-edge-laplacian-attention-I-branch-zero-warmup_2xb6-120k_1024x1024-cityscapes-runable-weight-class-76.62/20260317_114644/vis_data/scalars.json",
+    #"Lap I":"work_dirs/test-0318-3-pidnet-s-no-pretrained-laplacian-attention-I-branch-zero-norm-warmup-2xb6-120k_1024x1024-cityscapes-runable-weight-class-77.26/20260318_042453/vis_data/scalars.json"
     # 如果你后续跑了消融实验，只需要取消下面注释并填上路径：
     # "Ours (Only I-Branch)": "work_dirs/你的I分支实验路径/vis_data/scalars.json",
     # "Ours (Only D-Branch)": "work_dirs/你的D分支实验路径/vis_data/scalars.json",
@@ -18,7 +23,7 @@ LOG_CONFIG = {
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
 COLORS = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b']
-MARKERS = ['o', 's', '^', 'D', 'v', 'p']
+MARKERS = ['o', '^', 's',  'D', 'v', 'p']
 # ========================================================================
 
 def load_log_data(file_path):

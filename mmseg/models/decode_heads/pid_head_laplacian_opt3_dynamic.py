@@ -195,6 +195,9 @@ class PIDHeadLaplacianOpt3Dynamic(BaseDecodeHead):
         if dilation_size > 1:
             pad = dilation_size // 2
             boundary_map = F.max_pool2d(boundary_map, kernel_size=dilation_size, stride=1, padding=pad)
+
+            # 🚀 【修改点2：增加保险机制】强制裁剪，确保输出尺寸永远和输入严格一致
+            boundary_map = boundary_map[:, :, :valid_mask.shape[2], :valid_mask.shape[3]]
             
         # 6. 屏蔽掉 ignore 区域的边界
         boundary_map = boundary_map * valid_mask
@@ -220,7 +223,7 @@ class PIDHeadLaplacianOpt3Dynamic(BaseDecodeHead):
             cur_thresh = 0.5
         elif current_step < 80000:
             # 阶段二：平滑过渡期 (40K~80K)
-            cur_dilation = 4
+            cur_dilation = 5  # <--- 【修改点1】把 4 改成 5 (保持奇数核)
             cur_dice_w = 2.0
             cur_thresh = 0.6
         else:
