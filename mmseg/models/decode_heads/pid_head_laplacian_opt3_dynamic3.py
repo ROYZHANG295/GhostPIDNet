@@ -224,7 +224,7 @@ class PIDHeadLaplacianOpt3Dynamic3(BaseDecodeHead):
             cur_dice_w = 3.0
             cur_thresh = 0.5
             # 【新增】前期边界还不完美，极轻度反哺语义，防止把主干带偏
-            cur_sem_bd_w = 0.1  
+            cur_sem_bd_w = 1.0 
             
         elif current_step < 80000:
             # 阶段二：平滑降权期 (40K~80K)
@@ -232,7 +232,7 @@ class PIDHeadLaplacianOpt3Dynamic3(BaseDecodeHead):
             cur_dice_w = 1.0  # 降低 Loss 权重，防止过拟合
             cur_thresh = 0.55 
             # 【新增】边界逐渐成型，开始加大力度指导语义分支
-            cur_sem_bd_w = 0.5  
+            cur_sem_bd_w = 1.0  
             
         else:
             # 阶段三：末期精细微调 (80K~120K)
