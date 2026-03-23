@@ -12,8 +12,8 @@ LOG_CONFIG = {
     "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
     #"Laplacian Loss Dynamic":"work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260321_223222/vis_data/scalars.json",
     #"Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
-    "Laplacian Loss Dynamic 2": "work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260322_051110/vis_data/scalars.json",
-    
+    #"Laplacian Loss Dynamic 1": "work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260322_051110/vis_data/scalars.json",
+    "Laplacian Loss Dynamic 2": "work_dirs/test-0323-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic2_warmup-2xb6-120k_1024x1024-cityscapes/20260322_231131/vis_data/scalars.json"
     #"Distance Lap": "work_dirs/test-0318-2-pidnet-s-no-pretrained-distance-edge-laplacian-attention-I-branch-zero-warmup_2xb6-120k_1024x1024-cityscapes-runable-weight-class-76.62/20260317_114644/vis_data/scalars.json",
     #"Lap I":"work_dirs/test-0318-3-pidnet-s-no-pretrained-laplacian-attention-I-branch-zero-norm-warmup-2xb6-120k_1024x1024-cityscapes-runable-weight-class-77.26/20260318_042453/vis_data/scalars.json"
     # 如果你后续跑了消融实验，只需要取消下面注释并填上路径：
