@@ -9,12 +9,16 @@ LOG_CONFIG = {
     # "Baseline (PIDNet)": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
     # "Laplacian Loss": "work_dirs/test-0321-1-20k-pidnet-s-no-pretrained_laplacian_loss_warmup-2xb6-120k_1024x1024-cityscapes/20260320_042324/vis_data/scalars.json",
     # "Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
-    "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
+    #"Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
     #"Laplacian Loss Dynamic":"work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260321_223222/vis_data/scalars.json",
     #"Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
     #"Laplacian Loss Dynamic 1": "work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260322_051110/vis_data/scalars.json",
     #"Laplacian Loss Dynamic 2": "work_dirs/test-0323-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic2_warmup-2xb6-120k_1024x1024-cityscapes/20260322_231131/vis_data/scalars.json"
+    #"Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
     "Laplacian Loss Dynamic 3": "work_dirs/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes/20260323_080513/vis_data/scalars.json",
+    #"Baseline with 78.36": "../mmsegmentation/work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/20260214_210327-12k-miou=78.34/vis_data/scalars.json",
+    "Baseline CE weight": "work_dirs/test-0324-2-pidnet-s-cityspace-baseline-120k-1GPU-crossentropy-weight-b6/20260323_225044/vis_data/scalars.json",
+    "Baseline weight": "work_dirs/test-0324-4-pidnet-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/20260324_114111/vis_data/scalars.json",
     #"Distance Lap": "work_dirs/test-0318-2-pidnet-s-no-pretrained-distance-edge-laplacian-attention-I-branch-zero-warmup_2xb6-120k_1024x1024-cityscapes-runable-weight-class-76.62/20260317_114644/vis_data/scalars.json",
     #"Lap I":"work_dirs/test-0318-3-pidnet-s-no-pretrained-laplacian-attention-I-branch-zero-norm-warmup-2xb6-120k_1024x1024-cityscapes-runable-weight-class-77.26/20260318_042453/vis_data/scalars.json"
     # 如果你后续跑了消融实验，只需要取消下面注释并填上路径：
@@ -87,7 +91,7 @@ for i, (label_name, json_path) in enumerate(LOG_CONFIG.items()):
 
     # ------ 右图：画 mIoU 曲线 ------
     if miou:
-        ax2.plot(step_miou, miou, label=label_name, color=color, linewidth=2, marker=marker, markersize=6)
+        ax2.plot(step_miou, miou, label=label_name, color=color, linewidth=1, marker=marker, markersize=3)
 
 # ================= 3. 图表排版与美化 =================
 # Loss 图设置
