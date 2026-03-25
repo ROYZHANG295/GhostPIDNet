@@ -12,27 +12,11 @@ from torch import Tensor
 from mmseg.registry import MODELS
 from mmseg.utils import OptConfigType
 from ..utils import DAPPM, PAPPM, BasicBlock, Bottleneck
-from .laplacian_attention_plug import LaplacianAttention
+from .laplacian_attention_plug import LaplacianAttention  # 确保导入正确
 
 
 class PagFM(BaseModule):
-    """Pixel-attention-guided fusion module.
-
-    Args:
-        in_channels (int): The number of input channels.
-        channels (int): The number of channels.
-        after_relu (bool): Whether to use ReLU before attention.
-            Default: False.
-        with_channel (bool): Whether to use channel attention.
-            Default: False.
-        upsample_mode (str): The mode of upsample. Default: 'bilinear'.
-        norm_cfg (dict): Config dict for normalization layer.
-            Default: dict(type='BN').
-        act_cfg (dict): Config dict for activation layer.
-            Default: dict(typ='ReLU', inplace=True).
-        init_cfg (dict): Config dict for initialization. Default: None.
-    """
-
+    """Pixel-attention-guided fusion module (保持不变)"""
     def __init__(self,
                  in_channels: int,
                  channels: int,
@@ -57,15 +41,6 @@ class PagFM(BaseModule):
             self.relu = MODELS.build(act_cfg)
 
     def forward(self, x_p: Tensor, x_i: Tensor) -> Tensor:
-        """Forward function.
-
-        Args:
-            x_p (Tensor): The featrue map from P branch.
-            x_i (Tensor): The featrue map from I branch.
-
-        Returns:
-            Tensor: The feature map with pixel-attention-guided fusion.
-        """
         if self.after_relu:
             x_p = self.relu(x_p)
             x_i = self.relu(x_i)
@@ -95,22 +70,7 @@ class PagFM(BaseModule):
 
 
 class Bag(BaseModule):
-    """Boundary-attention-guided fusion module.
-
-    Args:
-        in_channels (int): The number of input channels.
-        out_channels (int): The number of output channels.
-        kernel_size (int): The kernel size of the convolution. Default: 3.
-        padding (int): The padding of the convolution. Default: 1.
-        norm_cfg (dict): Config dict for normalization layer.
-            Default: dict(type='BN').
-        act_cfg (dict): Config dict for activation layer.
-            Default: dict(type='ReLU', inplace=True).
-        conv_cfg (dict): Config dict for convolution layer.
-            Default: dict(order=('norm', 'act', 'conv')).
-        init_cfg (dict): Config dict for initialization. Default: None.
-    """
-
+    """Boundary-attention-guided fusion module (保持不变)"""
     def __init__(self,
                  in_channels: int,
                  out_channels: int,
@@ -121,7 +81,6 @@ class Bag(BaseModule):
                  conv_cfg: OptConfigType = dict(order=('norm', 'act', 'conv')),
                  init_cfg: OptConfigType = None):
         super().__init__(init_cfg)
-
         self.conv = ConvModule(
             in_channels,
             out_channels,
@@ -132,32 +91,12 @@ class Bag(BaseModule):
             **conv_cfg)
 
     def forward(self, x_p: Tensor, x_i: Tensor, x_d: Tensor) -> Tensor:
-        """Forward function.
-
-        Args:
-            x_p (Tensor): The featrue map from P branch.
-            x_i (Tensor): The featrue map from I branch.
-            x_d (Tensor): The featrue map from D branch.
-
-        Returns:
-            Tensor: The feature map with boundary-attention-guided fusion.
-        """
         sigma = torch.sigmoid(x_d)
         return self.conv(sigma * x_p + (1 - sigma) * x_i)
 
 
 class LightBag(BaseModule):
-    """Light Boundary-attention-guided fusion module.
-
-    Args:
-        in_channels (int): The number of input channels.
-        out_channels (int): The number of output channels.
-        norm_cfg (dict): Config dict for normalization layer.
-            Default: dict(type='BN').
-        act_cfg (dict): Config dict for activation layer. Default: None.
-        init_cfg (dict): Config dict for initialization. Default: None.
-    """
-
+    """Light Boundary-attention-guided fusion module (保持不变)"""
     def __init__(self,
                  in_channels: int,
                  out_channels: int,
@@ -179,52 +118,15 @@ class LightBag(BaseModule):
             act_cfg=act_cfg)
 
     def forward(self, x_p: Tensor, x_i: Tensor, x_d: Tensor) -> Tensor:
-        """Forward function.
-        Args:
-            x_p (Tensor): The featrue map from P branch.
-            x_i (Tensor): The featrue map from I branch.
-            x_d (Tensor): The featrue map from D branch.
-
-        Returns:
-            Tensor: The feature map with light boundary-attention-guided
-                fusion.
-        """
         sigma = torch.sigmoid(x_d)
-
         f_p = self.f_p((1 - sigma) * x_i + x_p)
         f_i = self.f_i(x_i + sigma * x_p)
-
         return f_p + f_i
 
 
 @MODELS.register_module()
 class PIDNetLAPlug(BaseModule):
-    """PIDNet backbone.
-
-    This backbone is the implementation of `PIDNet: A Real-time Semantic
-    Segmentation Network Inspired from PID Controller
-    <https://arxiv.org/abs/2206.02066>`_.
-    Modified from https://github.com/XuJiacong/PIDNet.
-
-    Licensed under the MIT License.
-
-    Args:
-        in_channels (int): The number of input channels. Default: 3.
-        channels (int): The number of channels in the stem layer. Default: 64.
-        ppm_channels (int): The number of channels in the PPM layer.
-            Default: 96.
-        num_stem_blocks (int): The number of blocks in the stem layer.
-            Default: 2.
-        num_branch_blocks (int): The number of blocks in the branch layer.
-            Default: 3.
-        align_corners (bool): The align_corners argument of F.interpolate.
-            Default: False.
-        norm_cfg (dict): Config dict for normalization layer.
-            Default: dict(type='BN').
-        act_cfg (dict): Config dict for activation layer.
-            Default: dict(type='ReLU', inplace=True).
-        init_cfg (dict): Config dict for initialization. Default: None.
-    """
+    """PIDNet backbone with Lightweight Laplacian Attention"""
 
     def __init__(self,
                  in_channels: int = 3,
@@ -248,12 +150,14 @@ class PIDNetLAPlug(BaseModule):
         self.relu = nn.ReLU()
 
         # --------------------------
-        # 1. 新增：Laplacian Attention 模块
+        # 优化版：Laplacian Attention 模块
+        # 只在关键位置插入，避免过多显存占用
         # --------------------------
-        self.la_i3 = LaplacianAttention(channels=channels * 4)  # I分支Stage3输出通道
-        self.la_p3 = LaplacianAttention(channels=channels * 2)  # P分支Stage3输出通道
-        self.la_i4 = LaplacianAttention(channels=channels * 8)  # I分支Stage4输出通道
-        self.la_p4 = LaplacianAttention(channels=channels * 2)  # P分支Stage4输出通道
+        self.la_i3 = LaplacianAttention(channels=channels * 4)  # I分支 Stage 3
+        self.la_p3 = LaplacianAttention(channels=channels * 2)  # P分支 Stage 3
+        # 可选：如果显存还是紧张，可以注释掉下面这两个 Stage 4 的
+        self.la_i4 = LaplacianAttention(channels=channels * 8)  # I分支 Stage 4
+        self.la_p4 = LaplacianAttention(channels=channels * 2)  # P分支 Stage 4
 
         # I Branch
         self.i_branch_layers = nn.ModuleList()
@@ -340,17 +244,6 @@ class PIDNetLAPlug(BaseModule):
 
     def _make_stem_layer(self, in_channels: int, channels: int,
                          num_blocks: int) -> nn.Sequential:
-        """Make stem layer.
-
-        Args:
-            in_channels (int): Number of input channels.
-            channels (int): Number of output channels.
-            num_blocks (int): Number of blocks.
-
-        Returns:
-            nn.Sequential: The stem layer.
-        """
-
         layers = [
             ConvModule(
                 in_channels,
@@ -369,7 +262,6 @@ class PIDNetLAPlug(BaseModule):
                 norm_cfg=self.norm_cfg,
                 act_cfg=self.act_cfg)
         ]
-
         layers.append(
             self._make_layer(BasicBlock, channels, channels, num_blocks))
         layers.append(nn.ReLU())
@@ -377,7 +269,6 @@ class PIDNetLAPlug(BaseModule):
             self._make_layer(
                 BasicBlock, channels, channels * 2, num_blocks, stride=2))
         layers.append(nn.ReLU())
-
         return nn.Sequential(*layers)
 
     def _make_layer(self,
@@ -386,17 +277,6 @@ class PIDNetLAPlug(BaseModule):
                     channels: int,
                     num_blocks: int,
                     stride: int = 1) -> nn.Sequential:
-        """Make layer for PIDNet backbone.
-        Args:
-            block (BasicBlock): Basic block.
-            in_channels (int): Number of input channels.
-            channels (int): Number of output channels.
-            num_blocks (int): Number of blocks.
-            stride (int): Stride of the first block. Default: 1.
-
-        Returns:
-            nn.Sequential: The Branch Layer.
-        """
         downsample = None
         if stride != 1 or in_channels != channels * block.expansion:
             downsample = ConvModule(
@@ -423,17 +303,6 @@ class PIDNetLAPlug(BaseModule):
                            in_channels: int,
                            channels: int,
                            stride: int = 1) -> nn.Module:
-        """Make single layer for PIDNet backbone.
-        Args:
-            block (BasicBlock or Bottleneck): Basic block or Bottleneck.
-            in_channels (int): Number of input channels.
-            channels (int): Number of output channels.
-            stride (int): Stride of the first block. Default: 1.
-
-        Returns:
-            nn.Module
-        """
-
         downsample = None
         if stride != 1 or in_channels != channels * block.expansion:
             downsample = ConvModule(
@@ -447,11 +316,6 @@ class PIDNetLAPlug(BaseModule):
             in_channels, channels, stride, downsample, act_cfg_out=None)
 
     def init_weights(self):
-        """Initialize the weights in backbone.
-
-        Since the D branch is not initialized by the pre-trained model, we
-        initialize it with the same method as the ResNet.
-        """
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(
@@ -469,33 +333,21 @@ class PIDNetLAPlug(BaseModule):
             self.load_state_dict(ckpt, strict=False)
 
     def forward(self, x: Tensor) -> Union[Tensor, Tuple[Tensor]]:
-        """Forward function.
-
-        Args:
-            x (Tensor): Input tensor with shape (B, C, H, W).
-
-        Returns:
-            Tensor or tuple[Tensor]: If self.training is True, return
-                tuple[Tensor], else return Tensor.
-        """
         w_out = x.shape[-1] // 8
         h_out = x.shape[-2] // 8
 
         # stage 0-2
         x = self.stem(x)
-        # --------------------------
-        # 2. 新增：Stage 3 后插入 Laplacian Attention
-        # --------------------------
 
-        # stage 3
+        # --------------------------
+        # Stage 3: 应用 LA
+        # --------------------------
         x_i = self.relu(self.i_branch_layers[0](x))
-
-        x_i = self.la_i3(x_i)  # 对I分支Stage3特征应用LA
-
+        x_i = self.la_i3(x_i)  # 应用注意力
+        
         x_p = self.p_branch_layers[0](x)
-
-        x_p = self.la_p3(x_p)  # 对P分支Stage3特征应用LA
-
+        x_p = self.la_p3(x_p)  # 应用注意力
+        
         x_d = self.d_branch_layers[0](x)
 
         comp_i = self.compression_1(x_i)
@@ -510,17 +362,14 @@ class PIDNetLAPlug(BaseModule):
             temp_p = x_p.clone()
 
         # --------------------------
-        # 3. 新增：Stage 4 后插入 Laplacian Attention
+        # Stage 4: 应用 LA
         # --------------------------
-        # stage 4
         x_i = self.relu(self.i_branch_layers[1](x_i))
-
-        x_i = self.la_i4(x_i)  # 对I分支Stage4特征应用LA
-
+        x_i = self.la_i4(x_i)  # 应用注意力
+        
         x_p = self.p_branch_layers[1](self.relu(x_p))
-
-        x_p = self.la_p4(x_p)  # 对P分支Stage4特征应用LA
-
+        x_p = self.la_p4(x_p)  # 应用注意力
+        
         x_d = self.d_branch_layers[1](self.relu(x_d))
 
         comp_i = self.compression_2(x_i)
