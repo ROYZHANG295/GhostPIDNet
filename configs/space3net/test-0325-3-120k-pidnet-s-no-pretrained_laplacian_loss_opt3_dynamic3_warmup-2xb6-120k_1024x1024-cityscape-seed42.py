@@ -37,7 +37,7 @@ model = dict(
         # init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
         ),
     decode_head=dict(
-        type='PIDHead',
+        type='PIDHeadLaplacianOpt3Dynamic3',
         in_channels=128,
         channels=128,
         num_classes=19,
@@ -56,7 +56,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(type='BoundaryLoss', loss_weight=1.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
@@ -78,13 +78,12 @@ train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
-    dict(type='GenerateEdge', edge_width=4),
+    # dict(type='GenerateEdge', edge_width=4),
     dict(type='PackSegInputs')
 ]
 train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
 
-# iters = 120000
-iters = 20000
+iters = 120000
 # optimizer
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
@@ -97,7 +96,7 @@ param_scheduler = [
         start_factor=1e-6,
         by_epoch=False,
         begin=0,
-        end=800),  # 建议设为 3000，稳一点
+        end=3000),  # 建议设为 3000，稳一点
     
     # 2. 正式训练阶段 (Poly Decay)
     # 从第 3000 次迭代开始，使用 Poly 策略衰减
@@ -105,13 +104,13 @@ param_scheduler = [
         type='PolyLR',
         eta_min=0,
         power=0.9,
-        begin=800, # 接上 Warmup 的结束时间
+        begin=3000, # 接上 Warmup 的结束时间
         end=iters,
         by_epoch=False)
 ]
 # training schedule for 120k
 train_cfg = dict(
-    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 20)
+    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 120)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
@@ -119,11 +118,12 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(
-        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=iters // 20),
+        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=iters // 120),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 
-randomness = dict(seed=304)
+# randomness = dict(seed=304)
+randomness = dict(seed=42)
 
 # ================= v1.x 最终修正版 (复制这个) =================
 
