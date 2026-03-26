@@ -37,7 +37,7 @@ model = dict(
         # init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
         ),
     decode_head=dict(
-        type='PIDHead',
+        type='PIDHeadLaplacianOpt3Dynamic3',
         in_channels=128,
         channels=128,
         num_classes=19,
@@ -56,7 +56,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(type='BoundaryLoss', loss_weight=1.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
@@ -78,7 +78,7 @@ train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
-    dict(type='GenerateEdge', edge_width=4),
+    # dict(type='GenerateEdge', edge_width=4),
     dict(type='PackSegInputs')
 ]
 train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
@@ -123,7 +123,20 @@ default_hooks = dict(
     visualization=dict(type='SegVisualizationHook'))
 
 # randomness = dict(seed=304)
-randomness = dict(seed=42)
+randomness = dict(
+    seed=42,
+    # deterministic=True,
+    diff_rank_seed=False
+)
+
+env_cfg = dict(
+    cudnn_benchmark=False,   # 🌟 这个最关键，一定要有
+    mp_cfg=dict(
+        mp_start_method='fork',     # Linux 服务器保留
+        opencv_num_threads=0        # 保留，防止读图乱序
+    ),
+    dist_cfg=dict(backend='nccl'),  # 单卡可以不写，但写了也没副作用
+)
 
 # ================= v1.x 最终修正版 (复制这个) =================
 
