@@ -36,7 +36,7 @@ model = dict(
         act_cfg=dict(type='ReLU', inplace=True),
         init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)),
     decode_head=dict(
-        type='PIDHeadLaplacianOpt3Dynamic3',
+        type='PIDHead',
         in_channels=128,
         channels=128,
         num_classes=19,
@@ -55,7 +55,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=1.0),
+            dict(type='BoundaryLoss', loss_weight=20.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
@@ -80,7 +80,7 @@ train_pipeline = [
     dict(type='GenerateEdge', edge_width=4),
     dict(type='PackSegInputs')
 ]
-train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
+train_dataloader = dict(batch_size=12, dataset=dict(pipeline=train_pipeline))
 
 iters = 120000
 # optimizer
