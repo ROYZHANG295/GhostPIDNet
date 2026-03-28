@@ -36,7 +36,7 @@ model = dict(
         act_cfg=dict(type='ReLU', inplace=True),
         init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)),
     decode_head=dict(
-        type='PIDHeadLaplacianOpt3',
+        type='PIDHeadLaplacianOpt3Dynamic3',
         in_channels=128,
         channels=128,
         num_classes=19,
