@@ -31,11 +31,14 @@ LOG_CONFIG = {
     # "Lap dynamic3 seed42": "work_dirs/test-0325-3-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscape-seed42/20260325_235117/vis_data/scalars.json",
     
     
-    "20k_baseline": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
-    # "20k_lap_plug": "work_dirs/test-0325-3-20k-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_100258/vis_data/scalars.json",
-    "20k_edge_aware": "work_dirs/test-0327-2-pidnet-s-no-pretrained_edge_aware_warmup-2xb6-120k_1024x1024-cityscapes-20k/20260327_073314/vis_data/scalars.json",
+    # "20k_baseline": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
+    # # "20k_lap_plug": "work_dirs/test-0325-3-20k-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_100258/vis_data/scalars.json",
+    # "20k_edge_aware": "work_dirs/test-0327-2-pidnet-s-no-pretrained_edge_aware_warmup-2xb6-120k_1024x1024-cityscapes-20k/20260327_073314/vis_data/scalars.json",
 
-    
+    "baseline b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline/20260324_000733/vis_data/scalars.json",
+    #"Lap loss v1": "experiments/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes-3090-78.65/20260322_231459-78.65/vis_data/scalars.json",
+    "Lap Dynamic3 b12": "work_dirs/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260328_070424/vis_data/scalars.json",
+
 # "Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
 # "Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
 }

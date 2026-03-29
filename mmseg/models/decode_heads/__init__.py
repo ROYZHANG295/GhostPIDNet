@@ -40,6 +40,7 @@ from .pid_head_laplacian_opt3 import PIDHeadLaplacianOpt3
 from .pid_head_laplacian_opt3_dynamic import PIDHeadLaplacianOpt3Dynamic
 from .pid_head_laplacian_opt3_dynamic2 import PIDHeadLaplacianOpt3Dynamic2
 from .pid_head_laplacian_opt3_dynamic3 import PIDHeadLaplacianOpt3Dynamic3
+from .pid_head_laplacian_opt3_dynamic4_smooth import PIDHeadLaplacianOpt3Dynamic4Smooth
 
 __all__ = [
     'FCNHead', 'PSPHead', 'ASPPHead', 'PSAHead', 'NLHead', 'GCHead', 'CCHead',
@@ -50,5 +51,6 @@ __all__ = [
     'SegformerHead', 'ISAHead', 'STDCHead', 'IterativeDecodeHead',
     'KernelUpdateHead', 'KernelUpdator', 'MaskFormerHead', 'Mask2FormerHead',
     'LightHamHead', 'PIDHead', 'DDRHead', 'VPDDepthHead', 'SideAdapterCLIPHead',
-    'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic', 'PIDHeadLaplacianOpt3Dynamic2', 'PIDHeadLaplacianOpt3Dynamic3'
+    'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic', 'PIDHeadLaplacianOpt3Dynamic2', 'PIDHeadLaplacianOpt3Dynamic3',
+    'PIDHeadLaplacianOpt3Dynamic4Smooth'
 ]
