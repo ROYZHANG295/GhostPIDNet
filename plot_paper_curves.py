@@ -17,7 +17,7 @@ LOG_CONFIG = {
     #"Laplacian Loss":"work_dirs/test-0321-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260321_013912/vis_data/scalars.json"
     #"Laplacian Loss Dynamic 1": "work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260322_051110/vis_data/scalars.json",
     #"Laplacian Loss Dynamic 2": "work_dirs/test-0323-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic2_warmup-2xb6-120k_1024x1024-cityscapes/20260322_231131/vis_data/scalars.json"
-    "Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
+    #"Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
     # "Laplacian Loss Dynamic 3": "work_dirs/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes/20260323_080513/vis_data/scalars.json",
     #"Baseline with 78.36": "../mmsegmentation/work_dirs/pidnet-s_2xb6-120k_1024x1024-cityscapes-runable-weight-class/20260214_210327-12k-miou=78.34/vis_data/scalars.json",
     #"Baseline CE weight": "work_dirs/test-0324-2-pidnet-s-cityspace-baseline-120k-1GPU-crossentropy-weight-b6/20260323_225044/vis_data/scalars.json",
@@ -32,12 +32,16 @@ LOG_CONFIG = {
     # "Lap dynamic3 seed42": "work_dirs/test-0325-3-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscape-seed42/20260325_235117/vis_data/scalars.json",
     # "20k_baseline": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
     # "20k_lap_plug": "work_dirs/test-0325-3-20k-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_100258/vis_data/scalars.json",
-    "Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
+    #"Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
+    "Baseline 78.20": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline/20260324_000733/vis_data/scalars.json",
+    "Dynamic3": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-78.53/20260328_211521/vis_data/scalars.json",
+    "Dynamic4 Smooth": "work_dirs/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260329_201357/vis_data/scalars.json",
+    
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
 COLORS = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b']
-MARKERS = ['o', 'o','^', 's',  'D', 'v', 'p']
+MARKERS = ['o', 'o', 'o', '^', 's',  'D', 'v', 'p']
 # ========================================================================
 
 def load_log_data(file_path):
