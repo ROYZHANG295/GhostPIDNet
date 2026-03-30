@@ -10,7 +10,7 @@ LOG_CONFIG = {
     # "Laplacian Loss": "work_dirs/test-0321-1-20k-pidnet-s-no-pretrained_laplacian_loss_warmup-2xb6-120k_1024x1024-cityscapes/20260320_042324/vis_data/scalars.json",
     # "Ours (Dual-Laplacian)": "work_dirs/test-0319-5-20k-pidnet-s-no-pretrained-dual-laplacian-attention-I-D-branch-warmup-2xb6-120k_1024x1024-cityscapes/20260319_084621/vis_data/scalars.json",
     # "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_095811/vis_data/scalars.json",
-    "Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_164727-76.39/vis_data/scalars.json",
+    #"Baseline": "work_dirs/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260320_164727-76.39/vis_data/scalars.json",
     # "Lap Plug": "work_dirs/test-0325-1-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260325_175033/vis_data/scalars.json",
     #"Lap Loss Dynamic3-seed42": "work_dirs/test-0325-3-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscape-seed42/20260325_190800/vis_data/scalars.json",
    #"Laplacian Loss Dynamic":"work_dirs/test-0322-1-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic_warmup-2xb6-120k_1024x1024-cityscapes/20260321_223222/vis_data/scalars.json",
@@ -39,9 +39,9 @@ LOG_CONFIG = {
     #"Lap loss v1": "experiments/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes-3090-78.65/20260322_231459-78.65/vis_data/scalars.json",
     #"Lap Dynamic3 b12": "work_dirs/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260328_070424/vis_data/scalars.json",
 
-    "Baseline no pretrained 76.5": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-76.50/20260320_095811/vis_data/scalars.json",
+    "Baseline no pretrained 76.39": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-3090-76.39-76.89/20260320_164727/vis_data/scalars.json",
     "Lap Dynamic4 no pretrained": "work_dirs/6-laplacian-loss-dynamic4-smooth-no-pretrained-warmup-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes/20260329_170136/vis_data/scalars.json",
-    #"Lap Dynamic3 no pretrained 77.20": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
+    # "Lap Dynamic3 no pretrained 77.20": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
 # "Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
 # "Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
 }
