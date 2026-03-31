@@ -56,10 +56,12 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         
         # =====================================================================
         # 【修改点 1】：新增计步器与轻量化边界预测头
-        # [小白秒懂]: 
-        # 1. local_step：相当于给模型戴个手表，记录跑到第几步了，方便动态调整策略。
-        # 2. bd_cls_seg：一个极小的 1x1 卷积，专门用来预测单通道的黑白边界图。
-        #    (注意：这个头只在训练时用，部署上线时直接扔掉，0 成本！)
+        # [专业解读]: 
+        # 1. self.register_buffer('local_step', ...): 注册一个非参数张量，用于持久化
+        #    追踪训练迭代步数，确保断点续训时课程学习进度条的连续性。
+        # 2. self.bd_cls_seg: 引入一个极轻量的 1x1 卷积层，作为专门的边界预测头。
+        #    该模块仅在训练阶段激活，实现对边界的显式监督，而在推理阶段被丢弃，
+        #    从而达到“零推理开销”的目的。
         # =====================================================================
         self.register_buffer('local_step', torch.tensor(0, dtype=torch.long))
         self.bd_cls_seg = nn.Conv2d(self.channels, 1, kernel_size=1)
@@ -76,23 +78,22 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         if self.training:
             c3_feat, c5_feat = inputs
             
-            # Context 分支 (负责大块全局语义)
             x_c = self.head(c5_feat)
             x_c_logit = self.cls_seg(x_c)
             
-            # Spatial 分支 (负责高分辨率空间细节)
             x_s = self.aux_head(c3_feat)
             x_s_logit = self.aux_cls_seg(x_s)
             
             # =================================================================
-            # 【修改点 2】：训练期提取边界特征
-            # [小白秒懂]: 让 Spatial 分支顺便预测一下边界 (bd_logit)
+            # 【修改点 2】：训练期提取边界 logits
+            # [专业解读]: 将高分辨率的空间分支(x_s)特征图输入给边界预测头(bd_cls_seg)，
+            # 生成单通道的边界预测 logits (bd_logit)，用于后续的边界损失计算。
+            # 这是实现对空间细节分支进行高频信息监督的关键一步。
             # =================================================================
             bd_logit = self.bd_cls_seg(x_s)
 
             return x_c_logit, x_s_logit, bd_logit
         else:
-            # 推理阶段：干干净净，没有任何多余操作，保证极速！
             x_c = self.head(inputs)
             x_c = self.cls_seg(x_c)
             return x_c
@@ -109,19 +110,18 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         return nn.Sequential(*layers)
 
     # =========================================================================
-    # 【修改点 3】：在线拉普拉斯边界提取
-    # [小白秒懂]: 用数学公式瞬间勾勒出完美轮廓。不用存几百GB的离线边缘图，
-    # 直接在显卡里用 3x3 矩阵扫一遍标签，0 延迟生成 100% 对齐的锐利边缘！
+    # 【修改点 3】：在线拉普拉斯边界提取 (On-the-fly Laplacian Boundary Extraction)
+    # [专业解读]: 提出一种无参数、实时的高频先验提取方法。通过对one-hot编码的真值标签
+    # 应用一个固定的拉普拉斯二阶微分算子，可以即时、无噪声地生成单像素宽度的边界图。
+    # 相比离线 Canny 算子，此方法避免了IO开销和阈值敏感性，并确保了与语义标签的完美对齐。
+    # 结合动态形态学膨胀(dilation_size)，实现了“由粗到细”的边界监督。
     # =========================================================================
     def _generate_laplacian_boundary(self, semantic_gt: Tensor, num_classes: int, 
                                      ignore_index: int = 255, dilation_size: int = 3) -> Tensor:
         valid_mask = (semantic_gt != ignore_index).float().unsqueeze(1)
         clean_gt = torch.where(semantic_gt == ignore_index, torch.zeros_like(semantic_gt), semantic_gt)
-        
-        # 把标签变成独热编码 (One-hot)
         gt_onehot = F.one_hot(clean_gt, num_classes=num_classes).permute(0, 3, 1, 2).float()
         
-        # 魔法矩阵：拉普拉斯算子 (中间挖个坑，四周填满土，一扫就能找出边缘)
         laplacian_kernel = torch.tensor([
             [1.0,  1.0, 1.0],
             [1.0, -8.0, 1.0],
@@ -132,7 +132,6 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         edge = (torch.abs(edge) > 0.1).float()
         boundary_map = torch.max(edge, dim=1, keepdim=True)[0]
         
-        # 动态形态学膨胀：如果 dilation_size 大，边缘就变粗（适合前期给网络降低难度）
         if dilation_size > 1:
             pad = dilation_size // 2
             boundary_map = F.max_pool2d(boundary_map, kernel_size=dilation_size, stride=1, padding=pad)
@@ -141,32 +140,32 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         return (boundary_map * valid_mask).squeeze(1)
 
     # =========================================================================
-    # 【修改点 4】：120k 时空动态课程学习调度器
-    # [小白秒懂]: 打破“死记硬背”，根据训练进度自动调节“边缘粗细”和“惩罚力度”。
-    # 完美适配 120k 训练总步数！
+    # 【修改点 4】：120k 时空联合动态课程学习调度器
+    # [专业解读]: 核心创新。本文提出了一种时空联合的课程学习调度器，用于解决实时网络
+    # 的“容量悖论”。该调度器通过一个预定义的字典(schedule)管理两个关键超参数：
+    # 1. 空间维度(dilation): 控制边界标签的粗细，实现由粗到细的拓扑学习。
+    # 2. 时间维度(dice_w): 控制边界损失的权重，通过“强先验->平滑衰减->瞬间解耦”三阶段策略，
+    #    避免了“梯度休克”，在训练的不同阶段动态平衡了高频细节与低频语义的优化。
     # =========================================================================
-    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
+    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float]:
         schedule = {
-            # 阶段 1 (0-40k)：强先验期。边缘画粗一点(5)，惩罚极重(3.0)，强迫打好基础。
-            0:      {'step': {'dilation': 5}, 'smooth': {'dice_w': 3.0, 'thresh': 0.50}},
-            40000:  {'step': {'dilation': 5}, 'smooth': {'dice_w': 3.0, 'thresh': 0.50}},
-            
-            # 阶段 2 (40k-80k)：平滑衰减期。边缘还是粗的，但惩罚慢慢降到 1.0，防止网络梯度休克。
-            80000:  {'step': {'dilation': 5}, 'smooth': {'dice_w': 1.0, 'thresh': 0.55}},
-            
-            # 阶段 3 (80k-120k)：瞬间减负微调期。要求突然变高，必须画极细边缘(3)，
-            # 但同时彻底松绑，惩罚降到 0.5，算力全开冲击极高 mIoU！
-            80001:  {'step': {'dilation': 3}, 'smooth': {'dice_w': 0.5, 'thresh': 0.60}},
-            120000: {'step': {'dilation': 3}, 'smooth': {'dice_w': 0.5, 'thresh': 0.60}} 
+            # 阶段 1 (0-40k)：强先验期。
+            0:      {'dilation': 5, 'dice_w': 3.0},
+            40000:  {'dilation': 5, 'dice_w': 3.0},
+            # 阶段 2 (40k-80k)：平滑衰减期。
+            80000:  {'dilation': 5, 'dice_w': 1.0},
+            # 阶段 3 (80k-120k)：瞬间减负微调期。
+            80001:  {'dilation': 3, 'dice_w': 0.5},
+            120000: {'dilation': 3, 'dice_w': 0.5} 
         }
 
         milestones = sorted(schedule.keys())
         if current_step <= milestones[0]:
             cfg = schedule[milestones[0]]
-            return cfg['step']['dilation'], cfg['smooth']['dice_w'], cfg['smooth']['thresh']
+            return cfg['dilation'], cfg['dice_w']
         if current_step >= milestones[-1]:
             cfg = schedule[milestones[-1]]
-            return cfg['step']['dilation'], cfg['smooth']['dice_w'], cfg['smooth']['thresh']
+            return cfg['dilation'], cfg['dice_w']
             
         start_step, end_step = milestones[0], milestones[-1]
         for i in range(len(milestones) - 1):
@@ -177,66 +176,63 @@ class DDRHeadLaplacianDynamic(BaseDecodeHead):
         start_cfg, end_cfg = schedule[start_step], schedule[end_step]
         progress = (current_step - start_step) / float(end_step - start_step)
         
-        cur_dilation = start_cfg['step']['dilation'] # 物理结构不平滑，直接硬切
-        cur_dice_w = start_cfg['smooth']['dice_w'] + progress * (end_cfg['smooth']['dice_w'] - start_cfg['smooth']['dice_w']) # 权重必须平滑插值！
-        cur_thresh = start_cfg['smooth']['thresh'] + progress * (end_cfg['smooth']['thresh'] - start_cfg['smooth']['thresh'])
+        cur_dilation = start_cfg['dilation']
+        cur_dice_w = start_cfg['dice_w'] + progress * (end_cfg['dice_w'] - start_cfg['dice_w'])
         
-        return cur_dilation, cur_dice_w, cur_thresh
+        return cur_dilation, cur_dice_w
 
     def loss_by_feat(self, seg_logits: Tuple[Tensor], batch_data_samples: SampleList) -> dict:
+        
+        # =====================================================================
+        # 【修改点 5】：Bug修复后的最终损失函数计算逻辑
+        # [专业解读]: 此处为本文方法的核心实现，并修复了先前版本中的致命逻辑错误。
+        # 错误逻辑：“语义反哺”机制错误地掩码了95%的非边界区域，导致主干网络“失明”。
+        # 正确逻辑【各司其职，精准辅助】:
+        # 1. 恢复全局视野：Context 和 Spatial 分支必须使用完整的`seg_label`进行训练，
+        #    以确保全局语义信息的充分学习。
+        # 2. 精准边界监督：新增的`loss_bd_laplacian`是BCE和Dice Loss的加权和，它
+        #    【只】作用于`bd_logit`。其梯度通过反向传播，间接且精准地引导Spatial分支
+        #    的浅层卷积核关注高频特征，而不会粗暴干扰全局语义学习。
+        # 3. 动态权重应用：`cur_dice_w`被精确地应用于Dice Loss部分，实现了“负重前行，
+        #    后期冲刺”的课程学习策略。
+        # =====================================================================
         
         if self.training:
             self.local_step += 1
         current_step = self.local_step.item()
         
-        # 看看手表，获取当前的动态参数 (粗细、权重、阈值)
-        cur_dilation, cur_dice_w, cur_thresh = self._get_dynamic_params(current_step)
+        cur_dilation, cur_dice_w = self._get_dynamic_params(current_step)
 
         loss = dict()
         context_logit, spatial_logit, bd_logit = seg_logits
         seg_label = self._stack_batch_gt(batch_data_samples)
 
-        # 统一放大到原图尺寸
         context_logit = resize(context_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
         spatial_logit = resize(spatial_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
         bd_logit = resize(bd_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
         
         seg_label = seg_label.squeeze(1)
 
-        # 当场生成动态粗细的完美边缘图！
         bd_label = self._generate_laplacian_boundary(
             seg_label, num_classes=self.num_classes, ignore_index=self.ignore_index, dilation_size=cur_dilation
         )
 
-        # 计算原版 DDRNet 的 Spatial 语义损失
+        # 1. 计算原版 DDRNet 的全局语义损失 (让它们看全图，绝不遮挡！)
+        loss['loss_context'] = self.loss_decode[0](context_logit, seg_label)
         loss['loss_spatial'] = self.loss_decode[1](spatial_logit, seg_label)
         
-        # =====================================================================
-        # 【修改点 5】：动态置信度语义反哺 + 联合边界损失
-        # [小白秒懂]: 
-        # 1. 反哺机制：让 Spatial 分支预测出的极高置信度边缘(>cur_thresh)，
-        #    变成“硬约束”塞给 Context 分支，强迫 Context 分支在边缘处不要糊！
-        # 2. 边界损失：BCE 算像素对错，Dice 算线条连贯性。配合动态权重 cur_dice_w 发挥神威！
-        # =====================================================================
-        pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
-        filler = torch.ones_like(seg_label) * self.ignore_index
-        
-        # 反哺 Context 分支 (宁缺毋滥，只有大于动态阈值才干预)
-        context_target = torch.where(pred_sigmoid > cur_thresh, seg_label, filler)
-        loss['loss_context'] = self.loss_decode[0](context_logit, context_target)
-
-        # 计算动态边界损失
+        # 2. 计算我们新增的、带动态权重的【联合边界损失】
         bce_loss = F.binary_cross_entropy_with_logits(bd_logit.squeeze(1), bd_label)
         
+        pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
         valid_mask = (seg_label != self.ignore_index).float()
         intersection = (pred_sigmoid * bd_label * valid_mask).sum(dim=(1, 2))
         union = (pred_sigmoid * valid_mask).sum(dim=(1, 2)) + (bd_label * valid_mask).sum(dim=(1, 2))
         dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
         
-        # 核心：将动态权重 cur_dice_w 应用于 Dice Loss
         loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
         
-        # 算个准确率汇报一下
+        # 3. 算个准确率汇报一下 (基于主干 Context 分支的预测)
         loss['acc_seg'] = accuracy(context_logit, seg_label, ignore_index=self.ignore_index)
 
         return loss
