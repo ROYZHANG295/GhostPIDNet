@@ -13,18 +13,18 @@ param_scheduler = [
         eta_min=1e-4,
         power=0.9,
         begin=1000,
-        end=160000,
+        end=120000,
         by_epoch=False,
     )
 ]
-optimizer = dict(type='SGD', lr=0.05, momentum=0.9, weight_decay=0.0005)
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
-train_dataloader = dict(batch_size=4, num_workers=4)
+train_dataloader = dict(batch_size=6, num_workers=4)
 val_dataloader = dict(batch_size=1, num_workers=4)
 test_dataloader = val_dataloader
 
 train_cfg = dict(
-    type='IterBasedTrainLoop', max_iters=160000, val_interval=1000)
+    type='IterBasedTrainLoop', max_iters=120000, val_interval=1000)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 default_hooks = dict(
