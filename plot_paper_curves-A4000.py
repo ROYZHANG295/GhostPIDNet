@@ -44,9 +44,15 @@ LOG_CONFIG = {
     # "Lap Dynamic3 no pretrained 77.20": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
 # "Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
 # "Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
-"DDRNet baseline": "work_dirs/8-ddrnet_23-slim_in1k-pre-baseline_2xb6-120k_cityscapes-1024x1024/20260330_090120/vis_data/scalars.json",
+
+#"DDRNet baseline": "work_dirs/8-ddrnet_23-slim_in1k-pre-baseline_2xb6-120k_cityscapes-1024x1024/20260330_090120/vis_data/scalars.json",
 # "DDRNet Dynamic": "work_dirs/9-ddrnet_23-slim_in1k-pre-laplacian-dynamic_2xb6-120k_cityscapes-1024x1024/20260330_103352/vis_data/scalars.json",
-"DDRNet HALO": "work_dirs/9-1-ddrnet_23-slim_in1k-pre-halo_2xb6-120k_cityscapes-1024x1024/20260331_104402/vis_data/scalars.json",
+#"DDRNet HALO": "work_dirs/9-1-ddrnet_23-slim_in1k-pre-halo_2xb6-120k_cityscapes-1024x1024/20260331_104402/vis_data/scalars.json",
+
+#"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+"PIDNet Baseline 78.09 b6": "experiments/test-0324-4-pidnet-s_1xb6-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.09/20260324_114617/vis_data/scalars.json",
+"PIDNet HALO": "work_dirs/12-pidnet-s_halo_1xb6-120k_1024x1024-cityscapes/20260401_044045/vis_data/scalars.json",
+"PIDNet Opt3": "experiments/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes-3090-78.65/20260322_231459-78.65/vis_data/scalars.json"
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记

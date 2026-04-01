@@ -60,14 +60,15 @@ class PIDHeadHALO(BaseDecodeHead):
        
     2. 动态黄金分割课程学习 (Holistic Golden Ratio Curriculum):
        【彻底消灭梯度休克与后期震荡】摒弃硬编码，引入 0.382-0.236-0.382 黄金调度！
-       - Phase 1 (0~38.2%): 强先验期 (Dilation=5, Weight=3.0, Thresh=0.5)。
-       - Phase 2 (38.2%~61.8%): 平滑过渡期 (Dilation=4, Weight/Thresh 线性插值)。
-       - Phase 3 (61.8%~100%): 极速冲刺期 (Dilation=3, Weight=0.5, Thresh=0.6)。
+       - Phase 1 (0~38.2%): 强先验期 (Dilation=5, Weight=3.0)。
+       - Phase 2 (38.2%~61.8%): 平滑过渡期 (Dilation=4, Weight 线性插值)。
+       - Phase 3 (61.8%~100%): 极速冲刺期 (Dilation=3, Weight=0.5)。
          在极低学习率下提供长达 38.2% 的无突变微调期，彻底抚平震荡，冲击 SOTA！
          
-    3. 语义反哺与联合边界损失 (Semantic Feedback & Joint Boundary Loss):
-       BCE 负责像素分类，Dice 负责结构连贯性。结合动态阈值 (Thresh) 将高置信度
-       边界特征反哺给语义主干 (I-branch)，实现精准辅助。
+    3. 神谕直连语义反哺 (Oracle-Direct Semantic Feedback):
+       【重大重构】彻底抛弃原版极不稳定的自预测置信度阈值 (pred > thresh)，
+       直接将绝对对齐的拉普拉斯物理边界作为强监督掩码反哺给语义主干。
+       从数学上切断了由于权重衰减引发的负反馈循环，实现全周期的绝对稳定！
     ===========================================================================
     """
     
@@ -77,7 +78,7 @@ class PIDHeadHALO(BaseDecodeHead):
                  num_classes: int,
                  norm_cfg: OptConfigType = dict(type='BN'),
                  act_cfg: OptConfigType = dict(type='ReLU', inplace=True),
-                 max_iters: int = 160000,  # <--- 【新增】传入总训练步数，默认 160k
+                 max_iters: int = 120000,  # <--- 传入总训练步数，默认 120k
                  **kwargs):
         super().__init__(
             in_channels,
@@ -130,9 +131,6 @@ class PIDHeadHALO(BaseDecodeHead):
 
     # =========================================================================
     # [创新点 1]: 在线拉普拉斯边界提取 (On-the-fly Laplacian Boundary Extraction)
-    # [为什么]: 原版数据集提供的边缘图(edge_map)往往太粗糙或包含噪声。
-    # [效果]: 直接从 Semantic GT 中利用拉普拉斯算子提取边缘，确保了边缘与语义的 
-    #        100% 绝对对齐，获得了极其纯粹、锐利的高频边界特征。
     # =========================================================================
     def _generate_laplacian_boundary(self, 
                                      semantic_gt: Tensor, 
@@ -178,42 +176,39 @@ class PIDHeadHALO(BaseDecodeHead):
 
     # =========================================================================
     # [创新点 3]: HALO 黄金分割课程学习调度器 (Holistic Golden Ratio Curriculum)
-    # [为什么]: 阶跃式切换会导致“梯度休克”，引发暴跌。
-    # [效果]: 自动计算 0.382 和 0.618 分界点。引入极其关键的 Dilation=4 平滑过渡期，
-    #        并在最后留下长达 38.2% 的无突变微调期，彻底抚平震荡。
     # =========================================================================
     def _build_golden_schedule(self, max_iters: int) -> dict:
-        t1 = int(max_iters * 0.382)  # 黄金分割点 1 (例如 160k 的 61120 步)
-        t2 = int(max_iters * 0.618)  # 黄金分割点 2 (例如 160k 的 98880 步)
+        t1 = int(max_iters * 0.382)  # 黄金分割点 1
+        t2 = int(max_iters * 0.618)  # 黄金分割点 2
         
+        # 【修改点 1】：彻底移除极度危险的 thresh 参数，切断负反馈循环
         schedule = {
             # 阶段 1 (0 -> 38.2%)：强先验平稳期。给网络下“猛药”。
-            0:      {'step': {'dilation': 5}, 'smooth': {'dice_w': 3.0, 'thresh': 0.50}},
-            t1:     {'step': {'dilation': 5}, 'smooth': {'dice_w': 3.0, 'thresh': 0.50}},
+            0:      {'dilation': 5, 'dice_w': 3.0},
+            t1:     {'dilation': 5, 'dice_w': 3.0},
             
             # 阶段 2 (38.2% -> 61.8%)：平滑过渡期。加入 Dilation=4 缓冲！
-            # 权重和阈值极其缓慢地线性滑落，完美消除梯度休克。
-            t1 + 1: {'step': {'dilation': 4}, 'smooth': {'dice_w': 3.0, 'thresh': 0.50}},
-            t2:     {'step': {'dilation': 4}, 'smooth': {'dice_w': 1.0, 'thresh': 0.55}},
+            t1 + 1: {'dilation': 4, 'dice_w': 3.0},
+            t2:     {'dilation': 4, 'dice_w': 1.0},
             
-            # 阶段 3 (61.8% -> 100%)：瞬间减负与精细微调期。
-            # 彻底释放算力给语义主干，长达 38.2% 的锁死期复刻后期一飞冲天的奇迹！
-            t2 + 1: {'step': {'dilation': 3}, 'smooth': {'dice_w': 0.5, 'thresh': 0.60}},
-            max_iters: {'step': {'dilation': 3}, 'smooth': {'dice_w': 0.5, 'thresh': 0.60}} 
+            # 阶段 3 (61.8% -> 100%)：瞬间减负与精细微调期。复刻一飞冲天的奇迹！
+            t2 + 1: {'dilation': 3, 'dice_w': 0.5},
+            max_iters: {'dilation': 3, 'dice_w': 0.5} 
         }
         return schedule
 
-    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
+    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float]:
         schedule = self.dynamic_schedule
         milestones = sorted(schedule.keys())
         
+        # 【修改点 2】：适配移除 thresh 后的读取逻辑
         if current_step <= milestones[0]:
             cfg = schedule[milestones[0]]
-            return cfg['step']['dilation'], cfg['smooth']['dice_w'], cfg['smooth']['thresh']
+            return cfg['dilation'], cfg['dice_w']
             
         if current_step >= milestones[-1]:
             cfg = schedule[milestones[-1]]
-            return cfg['step']['dilation'], cfg['smooth']['dice_w'], cfg['smooth']['thresh']
+            return cfg['dilation'], cfg['dice_w']
             
         start_step, end_step = milestones[0], milestones[-1]
         for i in range(len(milestones) - 1):
@@ -224,18 +219,13 @@ class PIDHeadHALO(BaseDecodeHead):
         start_cfg, end_cfg = schedule[start_step], schedule[end_step]
         progress = (current_step - start_step) / float(end_step - start_step)
         
-        # 阶跃参数直接取起点值
-        cur_dilation = start_cfg['step']['dilation']
+        # 阶跃参数 (Dilation) 直接取起点值
+        cur_dilation = start_cfg['dilation']
         
-        # 平滑参数进行线性插值
-        cur_dice_w = start_cfg['smooth']['dice_w'] + progress * (
-            end_cfg['smooth']['dice_w'] - start_cfg['smooth']['dice_w']
-        )
-        cur_thresh = start_cfg['smooth']['thresh'] + progress * (
-            end_cfg['smooth']['thresh'] - start_cfg['smooth']['thresh']
-        )
+        # 平滑参数 (Weight) 进行线性插值
+        cur_dice_w = start_cfg['dice_w'] + progress * (end_cfg['dice_w'] - start_cfg['dice_w'])
         
-        return cur_dilation, cur_dice_w, cur_thresh
+        return cur_dilation, cur_dice_w
 
     def loss_by_feat(self, seg_logits: Tuple[Tensor], batch_data_samples: SampleList) -> dict:
         
@@ -243,8 +233,8 @@ class PIDHeadHALO(BaseDecodeHead):
             self.local_step += 1
         current_step = self.local_step.item()
         
-        # 获取当前步数下的 HALO 平滑参数
-        cur_dilation, cur_dice_w, cur_thresh = self._get_dynamic_params(current_step)
+        # 【修改点 3】：不再接收 cur_thresh
+        cur_dilation, cur_dice_w = self._get_dynamic_params(current_step)
 
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits
@@ -271,9 +261,6 @@ class PIDHeadHALO(BaseDecodeHead):
         
         # =====================================================================
         # [创新点 4]: 像素级与结构级联合边界损失 (Pixel-Structure Joint Boundary Loss)
-        # [为什么]: 仅靠 BCE 无法逼迫网络画出“连贯的线条”，常导致边缘断裂。
-        # [效果]: BCE 负责像素分类，Dice 负责结构连贯性。配合动态权重 cur_dice_w，
-        #        在前期强力拉升边缘连贯性，后期平滑退出。
         # =====================================================================
         bce_loss = self.loss_decode[2](d_logit, bd_label)
         pred_sigmoid = torch.sigmoid(d_logit[:, 0, :, :])
@@ -286,9 +273,16 @@ class PIDHeadHALO(BaseDecodeHead):
         
         loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
         
-        # 2. 语义反哺 Loss (应用平滑过渡的阈值)
+        # =====================================================================
+        # [创新点 5]: 神谕直连语义反哺 (Oracle-Direct Semantic Feedback)
+        # =====================================================================
         filler = torch.ones_like(sem_label) * self.ignore_index
-        sem_bd_label = torch.where(pred_sigmoid > cur_thresh, sem_label, filler)
+        
+        # 【修改点 4】：最核心的一步！完全抛弃 pred_sigmoid > cur_thresh。
+        # 直接使用绝对完美的拉普拉斯物理边界 (bd_label > 0.5) 作为监督掩码。
+        # 彻底解决由于权重衰减导致的“置信度下降 -> 掩码失效 -> 梯度断裂”的死亡螺旋！
+        sem_bd_label = torch.where(bd_label > 0.5, sem_label, filler)
+        
         loss['loss_sem_bd'] = self.loss_decode[3](i_logit, sem_bd_label) 
         
         # 3. 准确率统计
