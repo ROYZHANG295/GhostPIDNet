@@ -45,6 +45,7 @@ from .pid_head_laplacian_opt3_dynamic5_smooth import PIDHeadLaplacianOpt3Dynamic
 from .ddr_head_dynamic import DDRHeadLaplacianDynamic
 from .bi_se_head_halo import BiSeNetHALOHead
 from .ddr_head_halo import DDRHeadHALO
+from .pid_head_halo import PIDHeadHALO
 
 __all__ = [
     'FCNHead', 'PSPHead', 'ASPPHead', 'PSAHead', 'NLHead', 'GCHead', 'CCHead',
@@ -56,5 +57,5 @@ __all__ = [
     'KernelUpdateHead', 'KernelUpdator', 'MaskFormerHead', 'Mask2FormerHead',
     'LightHamHead', 'PIDHead', 'DDRHead', 'VPDDepthHead', 'SideAdapterCLIPHead',
     'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic', 'PIDHeadLaplacianOpt3Dynamic2', 'PIDHeadLaplacianOpt3Dynamic3',
-    'PIDHeadLaplacianOpt3Dynamic4Smooth', 'PIDHeadLaplacianOpt3Dynamic5Smooth', 'DDRHeadLaplacianDynamic', 'BiSeNetHALOHead', 'DDRHeadHALO'
+    'PIDHeadLaplacianOpt3Dynamic4Smooth', 'PIDHeadLaplacianOpt3Dynamic5Smooth', 'DDRHeadLaplacianDynamic', 'BiSeNetHALOHead', 'DDRHeadHALO', 'PIDHeadHALO'
 ]

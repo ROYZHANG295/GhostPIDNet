@@ -45,7 +45,8 @@ LOG_CONFIG = {
 # "Baseline 76.39": "work_dirs/baselines/seed304-76.39/scalars.json",
 # "Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
 "DDRNet baseline": "work_dirs/8-ddrnet_23-slim_in1k-pre-baseline_2xb6-120k_cityscapes-1024x1024/20260330_090120/vis_data/scalars.json",
-"DDRNet Dynamic": "work_dirs/9-ddrnet_23-slim_in1k-pre-laplacian-dynamic_2xb6-120k_cityscapes-1024x1024/20260330_103352/vis_data/scalars.json",
+# "DDRNet Dynamic": "work_dirs/9-ddrnet_23-slim_in1k-pre-laplacian-dynamic_2xb6-120k_cityscapes-1024x1024/20260330_103352/vis_data/scalars.json",
+"DDRNet HALO": "work_dirs/9-1-ddrnet_23-slim_in1k-pre-halo_2xb6-120k_cityscapes-1024x1024/20260331_104402/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
