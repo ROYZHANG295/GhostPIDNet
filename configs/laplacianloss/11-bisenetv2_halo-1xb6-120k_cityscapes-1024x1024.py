@@ -28,7 +28,7 @@ model = dict(
         type='BiSeNetHALOHead',  
         in_channels=[128, 128],  # [Detail通道数, Fused通道数]
         in_index=[5, 0],         # 精准抓取: inputs[0] = detail(5), inputs[1] = fused(0)
-        max_iters=160000,        # 告诉 HALO 您要跑多少步，它会自动切分黄金比例
+        max_iters=120000,        # 告诉 HALO 您要跑多少步，它会自动切分黄金比例
         # 显式声明关键参数，防止被 base config 覆盖
         channels=1024,
         num_classes=19,
