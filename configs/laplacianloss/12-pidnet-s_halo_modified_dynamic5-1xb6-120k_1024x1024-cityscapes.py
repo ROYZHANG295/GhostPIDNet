@@ -91,7 +91,8 @@ train_pipeline = [
 # BS 翻倍后，GPU 吃数据的速度变快了，加一个 num_workers=4 防止 CPU 读图成为瓶颈
 # =====================================================================
 train_dataloader = dict(
-    batch_size=12, 
+    # batch_size=12, 
+    batch_size=6, 
     num_workers=4, 
     dataset=dict(pipeline=train_pipeline)
 )
