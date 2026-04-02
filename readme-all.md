@@ -1,3 +1,6 @@
+# AutoDL github加速
+source /etc/network_turbo
+
 查看驱动版本：nvidia-smi
 
 查看 CUDA 运行库版本，可使用 nvcc --version（需安装 CUDA Toolkit）
