@@ -20,8 +20,13 @@ data_preprocessor = dict(
     pad_val=0,
     seg_pad_val=255,
     size=crop_size)
-# norm_cfg = dict(type='SyncBN', requires_grad=True)
+# =====================================================================
+# 🚀 修改点 1：将 SyncBN 改为普通的 BN
+# 既然是单卡训练，SyncBN（跨卡同步）不仅没用，反而可能拖慢速度或报错。
+# 单卡 BS=12 算出来的普通 BN 已经极其稳定，这是单卡涨点的核心！
+# =====================================================================
 norm_cfg = dict(type='BN', requires_grad=True)
+
 model = dict(
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
@@ -37,7 +42,7 @@ model = dict(
         act_cfg=dict(type='ReLU', inplace=True),
         init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)),
     decode_head=dict(
-        type='PIDHead',
+        type='PIDHeadLaplacianOpt3Dynamic5SmoothHALO',
         in_channels=128,
         channels=128,
         num_classes=19,
@@ -56,7 +61,7 @@ model = dict(
                 min_kept=131072,
                 class_weight=class_weight,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(type='BoundaryLoss', loss_weight=1.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
@@ -81,7 +86,15 @@ train_pipeline = [
     dict(type='GenerateEdge', edge_width=4),
     dict(type='PackSegInputs')
 ]
-train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
+# =====================================================================
+# 🚀 修改点 2：Batch Size 改为 12，并显式指定 num_workers
+# BS 翻倍后，GPU 吃数据的速度变快了，加一个 num_workers=4 防止 CPU 读图成为瓶颈
+# =====================================================================
+train_dataloader = dict(
+    batch_size=12, 
+    num_workers=4, 
+    dataset=dict(pipeline=train_pipeline)
+)
 
 iters = 120000
 # optimizer
