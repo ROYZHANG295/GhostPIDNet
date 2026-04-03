@@ -33,12 +33,17 @@ LOG_CONFIG = {
     # "20k_baseline": "work_dirs/test-0319-4-20k-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes/20260319_034706/vis_data/scalars.json",
     # "20k_lap_plug": "work_dirs/test-0325-3-20k-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_100258/vis_data/scalars.json",
     #"Lap Plug": "work_dirs/3-pidnet-s-no-pretrained_laplacian_attention_plug_warmup-2xb6-120k_1024x1024-cityscapes/20260326_121148/vis_data/scalars.json",
-    "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
-    #"Dynamic3": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.53/20260328_211521/vis_data/scalars.json",
-    #"Dynamic4 Smooth": "work_dirs/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260329_201357/vis_data/scalars.json",
-    # "Dynamic5 Smooth": "work_dirs/7-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260330_140832/vis_data/scalars.json",
-    "PIDNet HALO-Dynamic5 b12": "work_dirs/12-pidnet-s_halo_modified_dynamic5-1xb12-120k_1024x1024-cityscapes/20260402_195655/vis_data/scalars.json",
+    # "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+    # #"Dynamic3": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.53/20260328_211521/vis_data/scalars.json",
+    # #"Dynamic4 Smooth": "work_dirs/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260329_201357/vis_data/scalars.json",
+    # # "Dynamic5 Smooth": "work_dirs/7-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260330_140832/vis_data/scalars.json",
+    # "PIDNet HALO-Dynamic5 b12": "work_dirs/12-pidnet-s_halo_modified_dynamic5-1xb12-120k_1024x1024-cityscapes/20260402_195655/vis_data/scalars.json",
 
+    # "PIDNet baseline 2xb6": "work_dirs/1-baseline-2GPU-120k-pidnet-s_2xb6-120k_1024x1024-cityscapes/20260326_231714/vis_data/scalars.json",
+    # "PIDNet Dynamic 2xb6": "work_dirs/3-laplacian-loss-dynamic5-smooth-2GPU-120k-pidnet-s_2xb6-120k_1024x1024-cityscapes/20260403_174922/vis_data/scalars.json",
+
+    "DDRNet baseline 2xb6": "experiments/halo-4-ddrnet_23-slim_in1k-pre-baseline_2xb6-120k_cityscapes-1024x1024/20260403_213836/vis_data/scalars.json",
+    "DDRNet avg3": "work_dirs/halo-5-ddrnet_23-slim_in1k-pre-halo_avg3_2xb6-120k_cityscapes-1024x1024/20260404_032140/vis_data/scalars.json",
     # BiSeNetV2 
     # "BiSeNetV2 Baseline": "work_dirs/10-bisenetv2_fcn_baseline-1xb6-120k_cityscapes-1024x1024/20260331_230655/vis_data/scalars.json",
     # "BiSeNetV2 HALO": "work_dirs/11-bisenetv2_halo-1xb6-120k_cityscapes-1024x1024/20260401_211214/vis_data/scalars.json",
