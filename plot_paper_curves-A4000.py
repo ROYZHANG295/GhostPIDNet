@@ -65,12 +65,12 @@ LOG_CONFIG = {
 # '''
 # PIDNet OPT3 & Dynamic1 & Dynamic2 & Dynamic3 & Dynamic4 Smooth & Dynamic5 Smooth b12
 # '''
-"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+#"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+"PIDNet Baseline 78.43 b12": "experiments/test-0325-2-pidnet-s_1xb12-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.43/20260325_050247/vis_data/scalars.json",
 # # "PIDNet dynamic3 78.53": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.53/20260328_211521/vis_data/scalars.json",
 # # "PIDNet dynamic3-2 78.64": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-A4000-78.64/20260328_070424/vis_data/scalars.json",
-"PIDNet dynamic4": "experiments/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.40/20260329_201357/vis_data/scalars.json",
-# "PIDNet dynamic5 78.65": "experiments/7-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.65/20260330_140832/vis_data/scalars.json",
-
+#"PIDNet dynamic4": "experiments/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.40/20260329_201357/vis_data/scalars.json",
+"PIDNet dynamic5 78.65": "experiments/7-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.65/20260330_140832/vis_data/scalars.json",
 
 # PIDNet No Pretrained
 # "Baseline no pretrained": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-A4000-76.50/20260320_095811/vis_data/scalars.json",
