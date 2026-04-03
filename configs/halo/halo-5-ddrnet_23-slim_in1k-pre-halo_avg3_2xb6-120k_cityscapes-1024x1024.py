@@ -33,7 +33,7 @@ model = dict(
         align_corners=False,
         init_cfg=dict(type='Pretrained', checkpoint=checkpoint)),
     decode_head=dict(
-        type='DDRHeadHALO',
+        type='DDRHeadHALOAvg3',
         in_channels=32 * 4,
         channels=64,
          # 【极其关键】：告诉 HALO 引擎总步数，让它自动切分黄金比例！
