@@ -100,7 +100,10 @@ train_dataloader = dict(
 iters = 120000
 # optimizer
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
-optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
+optim_wrapper = dict(type='OptimWrapper', 
+                     optimizer=optimizer, 
+                     accumulative_counts=2,  # 关键：2个bs=6累积成bs=12，解决小batch不稳定
+                     clip_grad=None)
 # learning policy
 param_scheduler = [
     dict(

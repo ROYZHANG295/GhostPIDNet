@@ -49,6 +49,7 @@ from .pid_head_halo import PIDHeadHALO
 from .pid_head_laplacian_opt3_dynamic5_smooth_halo import PIDHeadLaplacianOpt3Dynamic5SmoothHALO
 from .pid_head_halo_ablation import PIDHeadHALOAblation
 from .ddr_head_halo_avg3 import DDRHeadHALOAvg3
+from .pid_head_laplacian_opt3_dynamic6_smooth_spatial import PIDHeadLaplacianOpt3Dynamic6SmoothSRA
 
 __all__ = [
     'FCNHead', 'PSPHead', 'ASPPHead', 'PSAHead', 'NLHead', 'GCHead', 'CCHead',
@@ -61,5 +62,5 @@ __all__ = [
     'LightHamHead', 'PIDHead', 'DDRHead', 'VPDDepthHead', 'SideAdapterCLIPHead',
     'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic', 'PIDHeadLaplacianOpt3Dynamic2', 'PIDHeadLaplacianOpt3Dynamic3',
     'PIDHeadLaplacianOpt3Dynamic4Smooth', 'PIDHeadLaplacianOpt3Dynamic5Smooth', 'DDRHeadLaplacianDynamic', 'BiSeNetHALOHead', 'DDRHeadHALO', 'PIDHeadHALO',
-    'PIDHeadLaplacianOpt3Dynamic5SmoothHALO', 'PIDHeadHALOAblation', 'DDRHeadHALOAvg3'
+    'PIDHeadLaplacianOpt3Dynamic5SmoothHALO', 'PIDHeadHALOAblation', 'DDRHeadHALOAvg3', 'PIDHeadLaplacianOpt3Dynamic6SmoothSRA'
 ]
