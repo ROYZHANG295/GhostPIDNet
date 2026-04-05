@@ -20,13 +20,7 @@ data_preprocessor = dict(
     pad_val=0,
     seg_pad_val=255,
     size=crop_size)
-# =====================================================================
-# 🚀 修改点 1：将 SyncBN 改为普通的 BN
-# 既然是单卡训练，SyncBN（跨卡同步）不仅没用，反而可能拖慢速度或报错。
-# 单卡 BS=12 算出来的普通 BN 已经极其稳定，这是单卡涨点的核心！
-# =====================================================================
-norm_cfg = dict(type='BN', requires_grad=True)
-
+norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
     data_preprocessor=data_preprocessor,
@@ -40,13 +34,13 @@ model = dict(
         align_corners=False,
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
-        init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)),
+        init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)
+        ),
     decode_head=dict(
-        type='PIDHeadHALOAblation',
+        type='PIDHeadLaplacianOpt3',
         in_channels=128,
         channels=128,
         num_classes=19,
-        schedule_mode='smooth',
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
         align_corners=True,
@@ -84,18 +78,10 @@ train_pipeline = [
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PhotoMetricDistortion'),
-    dict(type='GenerateEdge', edge_width=4),
+    # dict(type='GenerateEdge', edge_width=4),
     dict(type='PackSegInputs')
 ]
-# =====================================================================
-# 🚀 修改点 2：Batch Size 改为 12->6，并显式指定 num_workers
-# BS 翻倍后，GPU 吃数据的速度变快了，加一个 num_workers=4 防止 CPU 读图成为瓶颈
-# =====================================================================
-train_dataloader = dict(
-    batch_size=6, 
-    num_workers=4, 
-    dataset=dict(pipeline=train_pipeline)
-)
+train_dataloader = dict(batch_size=12, dataset=dict(pipeline=train_pipeline))
 
 iters = 120000
 # optimizer
@@ -103,11 +89,22 @@ optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
 # learning policy
 param_scheduler = [
+    # 1. 热身阶段 (Warmup)
+    # 前 3000 次迭代，学习率从 1e-6 线性增加到 初始学习率
+    dict(
+        type='LinearLR',
+        start_factor=1e-6,
+        by_epoch=False,
+        begin=0,
+        end=3000),  # 建议设为 3000，稳一点
+    
+    # 2. 正式训练阶段 (Poly Decay)
+    # 从第 3000 次迭代开始，使用 Poly 策略衰减
     dict(
         type='PolyLR',
         eta_min=0,
         power=0.9,
-        begin=0,
+        begin=3000, # 接上 Warmup 的结束时间
         end=iters,
         by_epoch=False)
 ]
