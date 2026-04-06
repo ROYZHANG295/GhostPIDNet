@@ -10,9 +10,7 @@ class_weight = [
     1.0023, 0.9539, 0.9843, 1.1116, 0.9037, 1.0865, 1.0955, 1.0865, 1.1529,
     1.0507
 ]
-
-
-checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
+# checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
 crop_size = (1024, 1024)
 data_preprocessor = dict(
     type='SegDataPreProcessor',
@@ -36,7 +34,8 @@ model = dict(
         align_corners=False,
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
-        init_cfg=dict(type='Pretrained', checkpoint=checkpoint_file)),
+        # init_cfg=dict(type='Pretrained', checkpoint='checkpoint_file')
+        ),
     decode_head=dict(
         type='PIDHead',
         in_channels=128,
@@ -49,20 +48,20 @@ model = dict(
             dict(
                 type='CrossEntropyLoss',
                 use_sigmoid=False,
-#                class_weight=class_weight,
+                # class_weight=class_weight,
                 loss_weight=0.4),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
-               class_weight=class_weight,
+                class_weight=class_weight,
                 loss_weight=1.0),
             dict(type='BoundaryLoss', loss_weight=20.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
-               class_weight=class_weight,
+                class_weight=class_weight,
                 loss_weight=1.0)
         ]),
     train_cfg=dict(),
@@ -85,6 +84,7 @@ train_pipeline = [
 train_dataloader = dict(batch_size=6, dataset=dict(pipeline=train_pipeline))
 
 iters = 120000
+
 # optimizer
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', 
@@ -94,11 +94,22 @@ optim_wrapper = dict(type='OptimWrapper',
                      )
 # learning policy
 param_scheduler = [
+    # 1. 热身阶段 (Warmup)
+    # 前 3000 次迭代，学习率从 1e-6 线性增加到 初始学习率
+    dict(
+        type='LinearLR',
+        start_factor=1e-6,
+        by_epoch=False,
+        begin=0,
+        end=3000),  # 建议设为 3000，稳一点
+    
+    # 2. 正式训练阶段 (Poly Decay)
+    # 从第 3000 次迭代开始，使用 Poly 策略衰减
     dict(
         type='PolyLR',
         eta_min=0,
         power=0.9,
-        begin=0,
+        begin=3000, # 接上 Warmup 的结束时间
         end=iters,
         by_epoch=False)
 ]
@@ -112,7 +123,7 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(
-        type='CheckpointHook', by_epoch=False, save_best='mIoU',  interval=iters // 120),
+        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=iters // 120),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 
