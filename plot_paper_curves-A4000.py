@@ -56,7 +56,6 @@ LOG_CONFIG = {
 # PIDNet & PIDNet HALO b6
 # '''
 # "PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
-# "PIDNet Baseline 78.09 b6": "experiments/test-0324-4-pidnet-s_1xb6-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.09/20260324_114617/vis_data/scalars.json",
 # # # # "PIDNet HALO": "work_dirs/12-pidnet-s_halo_1xb6-120k_1024x1024-cityscapes/20260401_044045/vis_data/scalars.json",
 # # # # "PIDNet HALO no thresh": "work_dirs/12-1-pidnet-s_halo_no-thresh-1xb6-120k_1024x1024-cityscapes/20260401_173945/vis_data/scalars.json",
 # # # # "PIDNet Opt3": "experiments/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes-3090-78.65/20260322_231459-78.65/vis_data/scalars.json"
@@ -65,7 +64,7 @@ LOG_CONFIG = {
 # '''
 # PIDNet OPT3 & Dynamic1 & Dynamic2 & Dynamic3 & Dynamic4 Smooth & Dynamic5 Smooth b12
 # '''
-#"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+# "PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
 # "PIDNet baseline 78.45 2xb6": "experiments/1-baseline-2GPU-120k-pidnet-s_2xb6-120k_1024x1024-cityscapes-3090x2-78.45/20260326_231714/vis_data/scalars.json",
 # #"PIDNet Baseline 78.43 b12": "experiments/test-0325-2-pidnet-s_1xb12-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.43/20260325_050247/vis_data/scalars.json",
 # # # "PIDNet dynamic3 78.53": "experiments/4-laplacian-loss-dynamic3-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.53/20260328_211521/vis_data/scalars.json",
@@ -73,10 +72,15 @@ LOG_CONFIG = {
 # #"PIDNet dynamic4": "experiments/6-laplacian-loss-dynamic4-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.40/20260329_201357/vis_data/scalars.json",
 # "PIDNet dynamic5 78.65": "experiments/7-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes-3090-78.65/20260330_140832/vis_data/scalars.json",
 
+# PIDNet 1xb6
+#"PIDNet Baseline 78.09 b6": "experiments/test-0324-4-pidnet-s_1xb6-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.09/20260324_114617/vis_data/scalars.json",
+# "PIDNet Opt3 1xb6": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb6-120k_1024x1024-cityscapes/20260404_044607/vis_data/scalars.json",
+"PIDNet Dynamic5 1xb6 accu2": "work_dirs/halo-12-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260405_113125/vis_data/scalars.json",
+"PIDNet Dynamic6 1xb6 accu2": "work_dirs/halo-12-4-1-laplacian-loss-dynamic6-smooth-SRA-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260405_130203/vis_data/scalars.json",
 # PIDNet No Pretrained
-"Baseline no pretrained": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-A4000-76.50/20260320_095811/vis_data/scalars.json",
-# "Dynamic3 no pretrained": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
-"PIDNet dynamic5 no pretrained": "work_dirs/halo-10-no-pretrained-laplacian-loss-dynamic5-smooth-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes/20260403_221118/vis_data/scalars.json",
+# "Baseline no pretrained": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-A4000-76.50/20260320_095811/vis_data/scalars.json",
+# # # "Dynamic3 no pretrained": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
+# "PIDNet dynamic5 no pretrained": "work_dirs/halo-10-no-pretrained-laplacian-loss-dynamic5-smooth-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes/20260403_221118/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记

@@ -1,0 +1,40 @@
+_base_ = [
+    '../_base_/models/bisenetv2.py',
+    '../_base_/datasets/cityscapes_1024x1024.py',
+    '../_base_/default_runtime.py', '../_base_/schedules/schedule_160k.py'
+]
+crop_size = (1024, 1024)
+data_preprocessor = dict(size=crop_size)
+model = dict(data_preprocessor=data_preprocessor)
+param_scheduler = [
+    dict(type='LinearLR', by_epoch=False, start_factor=0.1, begin=0, end=1000),
+    dict(
+        type='PolyLR',
+        eta_min=1e-4,
+        power=0.9,
+        begin=1000,
+        end=120000,
+        by_epoch=False,
+    )
+]
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+optim_wrapper = dict(type='OptimWrapper', 
+                     optimizer=optimizer,
+                     accumulative_counts=2  # 👈 只加这一行
+                     )
+train_dataloader = dict(batch_size=6, num_workers=4)
+val_dataloader = dict(batch_size=1, num_workers=4)
+test_dataloader = val_dataloader
+
+train_cfg = dict(
+    type='IterBasedTrainLoop', max_iters=120000, val_interval=1000)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    checkpoint=dict(
+        type='CheckpointHook', by_epoch=False, save_best='mIoU', interval=1000),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    visualization=dict(type='SegVisualizationHook'))
