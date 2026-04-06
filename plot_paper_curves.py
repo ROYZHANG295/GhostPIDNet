@@ -50,11 +50,11 @@ LOG_CONFIG = {
     # PIDNet 1xb6
 # "PIDNet Baseline 1xb6": "experiments/test-0324-4-pidnet-s_1xb6-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.09/20260324_114617/vis_data/scalars.json",
 # "PIDNet Opt3 1xb6": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb6-120k_1024x1024-cityscapes/20260404_173334/vis_data/scalars.json",
-    
+# "": "",    
     # PIDNet 1xb12
     "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
-    "PIDNet Opt3 1xb12": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb12-120k_1024x1024-cityscapes/20260404_173653/vis_data/scalars.json",
-
+    # "PIDNet Opt3 1xb12": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb12-120k_1024x1024-cityscapes/20260404_173653/vis_data/scalars.json",
+    "PIDNet Dynamic5 1xb12": "work_dirs/halo-9-halo-ablation-smooth-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260405_214147/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
