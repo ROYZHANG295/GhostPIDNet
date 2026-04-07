@@ -1073,3 +1073,117 @@ The value is the same before and after calling `init_weights` of EncoderDecoder
 2026/04/07 22:07:05 - mmengine - INFO - Iter(train) [  1400/120000]  lr: 9.8950e-03  eta: 1 day, 1:08:55  time: 0.4473  data_time: 0.0272  memory: 11233  loss: 2.7134  decode.loss_context: 0.7622  decode.loss_spatial: 0.3803  decode.loss_bd_laplacian: 0.6454  decode.loss_halo_feedback: 0.9256  decode.acc_seg: 91.0335
 2026/04/07 22:07:27 - mmengine - INFO - Iter(train) [  1450/120000]  lr: 9.8913e-03  eta: 1 day, 0:46:46  time: 0.4454  data_time: 0.0275  memory: 11227  loss: 2.6548  decode.loss_context: 0.7722  decode.loss_spatial: 0.3710  decode.loss_bd_laplacian: 0.6380  decode.loss_halo_feedback: 0.8736  decode.acc_seg: 94.1223
 2026/04/07 22:07:50 - mmengine - INFO - Iter(train) [  1500/120000]  lr: 9.8875e-03  eta: 1 day, 0:26:01  time: 0.4459  data_time: 0.0269  memory: 11228  loss: 2.7610  decode.loss_context: 0.7979  decode.loss_spatial: 0.3849  decode.loss_bd_laplacian: 0.6318  decode.loss_halo_feedback: 0.9464  decode.acc_seg: 89.7559
+2026/04/07 22:08:12 - mmengine - INFO - Iter(train) [  1550/120000]  lr: 9.8837e-03  eta: 1 day, 0:06:44  time: 0.4482  data_time: 0.0278  memory: 11215  loss: 2.7319  decode.loss_context: 0.7972  decode.loss_spatial: 0.3674  decode.loss_bd_laplacian: 0.6334  decode.loss_halo_feedback: 0.9338  decode.acc_seg: 92.2120
+2026/04/07 22:08:34 - mmengine - INFO - Iter(train) [  1600/120000]  lr: 9.8800e-03  eta: 23:48:31  time: 0.4484  data_time: 0.0265  memory: 11222  loss: 2.7080  decode.loss_context: 0.7528  decode.loss_spatial: 0.3773  decode.loss_bd_laplacian: 0.6697  decode.loss_halo_feedback: 0.9083  decode.acc_seg: 91.2867
+2026/04/07 22:08:57 - mmengine - INFO - Iter(train) [  1650/120000]  lr: 9.8762e-03  eta: 23:31:31  time: 0.4535  data_time: 0.0267  memory: 11222  loss: 2.6279  decode.loss_context: 0.7602  decode.loss_spatial: 0.3478  decode.loss_bd_laplacian: 0.6232  decode.loss_halo_feedback: 0.8967  decode.acc_seg: 94.3135
+2026/04/07 22:09:20 - mmengine - INFO - Iter(train) [  1700/120000]  lr: 9.8725e-03  eta: 23:15:43  time: 0.4493  data_time: 0.0278  memory: 11224  loss: 2.6408  decode.loss_context: 0.7254  decode.loss_spatial: 0.3518  decode.loss_bd_laplacian: 0.6358  decode.loss_halo_feedback: 0.9278  decode.acc_seg: 92.5129
+2026/04/07 22:09:42 - mmengine - INFO - Iter(train) [  1750/120000]  lr: 9.8687e-03  eta: 23:00:18  time: 0.4464  data_time: 0.0273  memory: 11235  loss: 2.7864  decode.loss_context: 0.8098  decode.loss_spatial: 0.3999  decode.loss_bd_laplacian: 0.6552  decode.loss_halo_feedback: 0.9214  decode.acc_seg: 90.7630
+2026/04/07 22:10:04 - mmengine - INFO - Iter(train) [  1800/120000]  lr: 9.8650e-03  eta: 22:45:59  time: 0.4539  data_time: 0.0265  memory: 11212  loss: 2.6479  decode.loss_context: 0.7796  decode.loss_spatial: 0.3437  decode.loss_bd_laplacian: 0.6291  decode.loss_halo_feedback: 0.8956  decode.acc_seg: 93.2916
+2026/04/07 22:10:27 - mmengine - INFO - Iter(train) [  1850/120000]  lr: 9.8612e-03  eta: 22:32:32  time: 0.4462  data_time: 0.0265  memory: 11225  loss: 2.6082  decode.loss_context: 0.7436  decode.loss_spatial: 0.3347  decode.loss_bd_laplacian: 0.6284  decode.loss_halo_feedback: 0.9016  decode.acc_seg: 94.7689
+2026/04/07 22:10:49 - mmengine - INFO - Iter(train) [  1900/120000]  lr: 9.8575e-03  eta: 22:19:44  time: 0.4500  data_time: 0.0276  memory: 11230  loss: 2.6684  decode.loss_context: 0.7507  decode.loss_spatial: 0.3725  decode.loss_bd_laplacian: 0.6312  decode.loss_halo_feedback: 0.9140  decode.acc_seg: 94.3406
+2026/04/07 22:11:12 - mmengine - INFO - Iter(train) [  1950/120000]  lr: 9.8537e-03  eta: 22:07:16  time: 0.4364  data_time: 0.0271  memory: 11222  loss: 2.5503  decode.loss_context: 0.7115  decode.loss_spatial: 0.3288  decode.loss_bd_laplacian: 0.6116  decode.loss_halo_feedback: 0.8984  decode.acc_seg: 91.7786
+2026/04/07 22:11:34 - mmengine - INFO - Exp name: halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024_20260407_214854
+2026/04/07 22:11:34 - mmengine - INFO - Iter(train) [  2000/120000]  lr: 9.8499e-03  eta: 21:55:24  time: 0.4470  data_time: 0.0272  memory: 11226  loss: 2.6016  decode.loss_context: 0.7238  decode.loss_spatial: 0.3506  decode.loss_bd_laplacian: 0.6311  decode.loss_halo_feedback: 0.8961  decode.acc_seg: 93.6064
+2026/04/07 22:11:34 - mmengine - INFO - Saving checkpoint at 2000 iterations
+2026/04/07 22:11:36 - mmengine - INFO - Iter(val) [ 50/500]    eta: 0:00:10  time: 0.0202  data_time: 0.0069  memory: 405  
+2026/04/07 22:11:37 - mmengine - INFO - Iter(val) [100/500]    eta: 0:00:08  time: 0.0192  data_time: 0.0059  memory: 405  
+2026/04/07 22:11:38 - mmengine - INFO - Iter(val) [150/500]    eta: 0:00:07  time: 0.0209  data_time: 0.0076  memory: 405  
+2026/04/07 22:11:39 - mmengine - INFO - Iter(val) [200/500]    eta: 0:00:06  time: 0.0187  data_time: 0.0054  memory: 405  
+2026/04/07 22:11:40 - mmengine - INFO - Iter(val) [250/500]    eta: 0:00:05  time: 0.0206  data_time: 0.0073  memory: 405  
+2026/04/07 22:11:41 - mmengine - INFO - Iter(val) [300/500]    eta: 0:00:04  time: 0.0192  data_time: 0.0058  memory: 405  
+2026/04/07 22:11:42 - mmengine - INFO - Iter(val) [350/500]    eta: 0:00:03  time: 0.0201  data_time: 0.0067  memory: 405  
+2026/04/07 22:11:42 - mmengine - INFO - Iter(val) [400/500]    eta: 0:00:02  time: 0.0190  data_time: 0.0057  memory: 405  
+2026/04/07 22:11:43 - mmengine - INFO - Iter(val) [450/500]    eta: 0:00:01  time: 0.0199  data_time: 0.0065  memory: 405  
+2026/04/07 22:11:44 - mmengine - INFO - Iter(val) [500/500]    eta: 0:00:00  time: 0.0194  data_time: 0.0061  memory: 405  
+2026/04/07 22:11:44 - mmengine - INFO - per class results:
+2026/04/07 22:11:44 - mmengine - INFO - 
++---------------+-------+-------+
+|     Class     |  IoU  |  Acc  |
++---------------+-------+-------+
+|      road     | 96.04 |  98.5 |
+|    sidewalk   | 72.54 |  82.7 |
+|    building   | 88.57 | 95.74 |
+|      wall     | 27.05 |  29.6 |
+|     fence     | 44.12 | 62.75 |
+|      pole     | 48.77 | 56.59 |
+| traffic light |  50.1 | 59.09 |
+|  traffic sign | 65.52 | 76.39 |
+|   vegetation  | 89.77 | 94.65 |
+|    terrain    | 46.15 | 56.01 |
+|      sky      |  92.3 | 96.17 |
+|     person    | 71.43 | 82.12 |
+|     rider     | 40.75 | 56.85 |
+|      car      | 88.78 | 96.86 |
+|     truck     | 35.75 | 43.22 |
+|      bus      | 47.97 | 54.97 |
+|     train     | 22.87 |  23.8 |
+|   motorcycle  | 13.28 | 14.58 |
+|    bicycle    | 67.27 | 81.75 |
++---------------+-------+-------+
+2026/04/07 22:11:44 - mmengine - INFO - Iter(val) [500/500]    aAcc: 93.2900  mIoU: 58.3700  mAcc: 66.4400  data_time: 0.0068  time: 0.0202
+2026/04/07 22:11:44 - mmengine - INFO - The previous best checkpoint /root/autodl-tmp/auto_drive/GhostPIDNet/ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024/best_mIoU_iter_1000.pth is removed
+2026/04/07 22:11:45 - mmengine - INFO - The best checkpoint with 58.3700 mIoU at 2000 iter is saved to best_mIoU_iter_2000.pth.
+2026/04/07 22:12:08 - mmengine - INFO - Iter(train) [  2050/120000]  lr: 9.8462e-03  eta: 21:44:58  time: 0.4475  data_time: 0.0273  memory: 11225  loss: 2.6526  decode.loss_context: 0.7858  decode.loss_spatial: 0.3515  decode.loss_bd_laplacian: 0.6259  decode.loss_halo_feedback: 0.8894  decode.acc_seg: 94.4629
+2026/04/07 22:12:30 - mmengine - INFO - Iter(train) [  2100/120000]  lr: 9.8424e-03  eta: 21:34:22  time: 0.4516  data_time: 0.0280  memory: 11217  loss: 2.6484  decode.loss_context: 0.7408  decode.loss_spatial: 0.3693  decode.loss_bd_laplacian: 0.6348  decode.loss_halo_feedback: 0.9035  decode.acc_seg: 92.3984
+2026/04/07 22:12:52 - mmengine - INFO - Iter(train) [  2150/120000]  lr: 9.8387e-03  eta: 21:24:14  time: 0.4497  data_time: 0.0272  memory: 11225  loss: 2.5246  decode.loss_context: 0.6613  decode.loss_spatial: 0.3453  decode.loss_bd_laplacian: 0.6304  decode.loss_halo_feedback: 0.8876  decode.acc_seg: 93.4763
+2026/04/07 22:13:15 - mmengine - INFO - Iter(train) [  2200/120000]  lr: 9.8349e-03  eta: 21:14:18  time: 0.4432  data_time: 0.0265  memory: 11219  loss: 2.6000  decode.loss_context: 0.7504  decode.loss_spatial: 0.3404  decode.loss_bd_laplacian: 0.6223  decode.loss_halo_feedback: 0.8869  decode.acc_seg: 93.7595
+2026/04/07 22:13:37 - mmengine - INFO - Iter(train) [  2250/120000]  lr: 9.8312e-03  eta: 21:04:56  time: 0.4473  data_time: 0.0275  memory: 11218  loss: 2.5980  decode.loss_context: 0.7215  decode.loss_spatial: 0.3691  decode.loss_bd_laplacian: 0.6287  decode.loss_halo_feedback: 0.8788  decode.acc_seg: 95.8611
+2026/04/07 22:13:59 - mmengine - INFO - Iter(train) [  2300/120000]  lr: 9.8274e-03  eta: 20:56:00  time: 0.4486  data_time: 0.0274  memory: 11216  loss: 2.5958  decode.loss_context: 0.7043  decode.loss_spatial: 0.3567  decode.loss_bd_laplacian: 0.6236  decode.loss_halo_feedback: 0.9112  decode.acc_seg: 93.1442
+2026/04/07 22:14:22 - mmengine - INFO - Iter(train) [  2350/120000]  lr: 9.8236e-03  eta: 20:47:25  time: 0.4473  data_time: 0.0264  memory: 11219  loss: 2.6620  decode.loss_context: 0.7861  decode.loss_spatial: 0.3834  decode.loss_bd_laplacian: 0.6206  decode.loss_halo_feedback: 0.8719  decode.acc_seg: 94.3090
+2026/04/07 22:14:44 - mmengine - INFO - Iter(train) [  2400/120000]  lr: 9.8199e-03  eta: 20:39:13  time: 0.4494  data_time: 0.0280  memory: 11223  loss: 2.5018  decode.loss_context: 0.6828  decode.loss_spatial: 0.3311  decode.loss_bd_laplacian: 0.6288  decode.loss_halo_feedback: 0.8591  decode.acc_seg: 95.8167
+2026/04/07 22:15:07 - mmengine - INFO - Iter(train) [  2450/120000]  lr: 9.8161e-03  eta: 20:31:20  time: 0.4483  data_time: 0.0278  memory: 11230  loss: 2.6107  decode.loss_context: 0.7413  decode.loss_spatial: 0.3659  decode.loss_bd_laplacian: 0.6172  decode.loss_halo_feedback: 0.8863  decode.acc_seg: 93.9697
+2026/04/07 22:15:29 - mmengine - INFO - Iter(train) [  2500/120000]  lr: 9.8124e-03  eta: 20:23:47  time: 0.4470  data_time: 0.0268  memory: 11226  loss: 2.6393  decode.loss_context: 0.7527  decode.loss_spatial: 0.3490  decode.loss_bd_laplacian: 0.6274  decode.loss_halo_feedback: 0.9101  decode.acc_seg: 93.3943
+2026/04/07 22:15:51 - mmengine - INFO - Iter(train) [  2550/120000]  lr: 9.8086e-03  eta: 20:16:29  time: 0.4474  data_time: 0.0268  memory: 11230  loss: 2.5466  decode.loss_context: 0.7213  decode.loss_spatial: 0.3464  decode.loss_bd_laplacian: 0.6196  decode.loss_halo_feedback: 0.8594  decode.acc_seg: 94.7636
+2026/04/07 22:16:14 - mmengine - INFO - Iter(train) [  2600/120000]  lr: 9.8049e-03  eta: 20:09:27  time: 0.4485  data_time: 0.0278  memory: 11230  loss: 2.6076  decode.loss_context: 0.7245  decode.loss_spatial: 0.3614  decode.loss_bd_laplacian: 0.6231  decode.loss_halo_feedback: 0.8987  decode.acc_seg: 92.8719
+2026/04/07 22:16:37 - mmengine - INFO - Iter(train) [  2650/120000]  lr: 9.8011e-03  eta: 20:02:50  time: 0.4528  data_time: 0.0291  memory: 11228  loss: 2.7016  decode.loss_context: 0.7941  decode.loss_spatial: 0.3607  decode.loss_bd_laplacian: 0.6284  decode.loss_halo_feedback: 0.9184  decode.acc_seg: 93.6808
+2026/04/07 22:16:59 - mmengine - INFO - Iter(train) [  2700/120000]  lr: 9.7973e-03  eta: 19:56:12  time: 0.4481  data_time: 0.0260  memory: 11233  loss: 2.5868  decode.loss_context: 0.7215  decode.loss_spatial: 0.3585  decode.loss_bd_laplacian: 0.6265  decode.loss_halo_feedback: 0.8803  decode.acc_seg: 94.6638
+2026/04/07 22:17:21 - mmengine - INFO - Iter(train) [  2750/120000]  lr: 9.7936e-03  eta: 19:49:50  time: 0.4470  data_time: 0.0270  memory: 11215  loss: 2.5793  decode.loss_context: 0.7318  decode.loss_spatial: 0.3453  decode.loss_bd_laplacian: 0.6178  decode.loss_halo_feedback: 0.8844  decode.acc_seg: 92.8489
+2026/04/07 22:17:44 - mmengine - INFO - Iter(train) [  2800/120000]  lr: 9.7898e-03  eta: 19:43:44  time: 0.4493  data_time: 0.0284  memory: 11217  loss: 2.6325  decode.loss_context: 0.7611  decode.loss_spatial: 0.3726  decode.loss_bd_laplacian: 0.6272  decode.loss_halo_feedback: 0.8716  decode.acc_seg: 91.9348
+2026/04/07 22:18:06 - mmengine - INFO - Iter(train) [  2850/120000]  lr: 9.7861e-03  eta: 19:37:51  time: 0.4504  data_time: 0.0275  memory: 11221  loss: 2.7653  decode.loss_context: 0.8228  decode.loss_spatial: 0.4138  decode.loss_bd_laplacian: 0.6385  decode.loss_halo_feedback: 0.8901  decode.acc_seg: 90.6833
+2026/04/07 22:18:28 - mmengine - INFO - Iter(train) [  2900/120000]  lr: 9.7823e-03  eta: 19:32:09  time: 0.4481  data_time: 0.0278  memory: 11217  loss: 2.6094  decode.loss_context: 0.7442  decode.loss_spatial: 0.3570  decode.loss_bd_laplacian: 0.6325  decode.loss_halo_feedback: 0.8757  decode.acc_seg: 91.3744
+2026/04/07 22:18:51 - mmengine - INFO - Iter(train) [  2950/120000]  lr: 9.7785e-03  eta: 19:26:34  time: 0.4481  data_time: 0.0279  memory: 11227  loss: 2.6503  decode.loss_context: 0.7801  decode.loss_spatial: 0.3398  decode.loss_bd_laplacian: 0.6226  decode.loss_halo_feedback: 0.9078  decode.acc_seg: 89.5999
+2026/04/07 22:19:13 - mmengine - INFO - Exp name: halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024_20260407_214854
+2026/04/07 22:19:13 - mmengine - INFO - Iter(train) [  3000/120000]  lr: 9.7748e-03  eta: 19:21:11  time: 0.4454  data_time: 0.0263  memory: 11225  loss: 2.5766  decode.loss_context: 0.7546  decode.loss_spatial: 0.3558  decode.loss_bd_laplacian: 0.6099  decode.loss_halo_feedback: 0.8563  decode.acc_seg: 93.4753
+2026/04/07 22:19:13 - mmengine - INFO - Saving checkpoint at 3000 iterations
+2026/04/07 22:19:15 - mmengine - INFO - Iter(val) [ 50/500]    eta: 0:00:10  time: 0.0195  data_time: 0.0062  memory: 405  
+2026/04/07 22:19:16 - mmengine - INFO - Iter(val) [100/500]    eta: 0:00:08  time: 0.0190  data_time: 0.0058  memory: 405  
+2026/04/07 22:19:17 - mmengine - INFO - Iter(val) [150/500]    eta: 0:00:07  time: 0.0202  data_time: 0.0070  memory: 405  
+2026/04/07 22:19:18 - mmengine - INFO - Iter(val) [200/500]    eta: 0:00:06  time: 0.0191  data_time: 0.0059  memory: 405  
+2026/04/07 22:19:19 - mmengine - INFO - Iter(val) [250/500]    eta: 0:00:05  time: 0.0202  data_time: 0.0069  memory: 405  
+2026/04/07 22:19:20 - mmengine - INFO - Iter(val) [300/500]    eta: 0:00:04  time: 0.0192  data_time: 0.0059  memory: 405  
+2026/04/07 22:19:21 - mmengine - INFO - Iter(val) [350/500]    eta: 0:00:03  time: 0.0196  data_time: 0.0063  memory: 405  
+2026/04/07 22:19:22 - mmengine - INFO - Iter(val) [400/500]    eta: 0:00:02  time: 0.0194  data_time: 0.0061  memory: 405  
+2026/04/07 22:19:23 - mmengine - INFO - Iter(val) [450/500]    eta: 0:00:01  time: 0.0190  data_time: 0.0056  memory: 405  
+2026/04/07 22:19:24 - mmengine - INFO - Iter(val) [500/500]    eta: 0:00:00  time: 0.0186  data_time: 0.0054  memory: 405  
+2026/04/07 22:19:24 - mmengine - INFO - per class results:
+2026/04/07 22:19:24 - mmengine - INFO - 
++---------------+-------+-------+
+|     Class     |  IoU  |  Acc  |
++---------------+-------+-------+
+|      road     | 96.29 | 97.69 |
+|    sidewalk   |  74.2 | 87.99 |
+|    building   |  87.7 | 92.81 |
+|      wall     | 25.69 | 26.88 |
+|     fence     | 40.52 | 44.83 |
+|      pole     | 51.35 | 62.92 |
+| traffic light | 53.68 |  67.4 |
+|  traffic sign | 66.04 | 72.22 |
+|   vegetation  | 88.39 | 97.16 |
+|    terrain    | 50.98 | 58.46 |
+|      sky      | 91.23 |  98.2 |
+|     person    | 68.66 | 91.52 |
+|     rider     | 42.79 | 62.65 |
+|      car      | 90.09 | 96.15 |
+|     truck     |  34.7 | 55.04 |
+|      bus      | 32.53 | 37.85 |
+|     train     | 11.29 | 12.11 |
+|   motorcycle  | 37.45 | 55.35 |
+|    bicycle    | 68.39 | 80.01 |
++---------------+-------+-------+
+2026/04/07 22:19:24 - mmengine - INFO - Iter(val) [500/500]    aAcc: 93.1300  mIoU: 58.5200  mAcc: 68.2800  data_time: 0.0068  time: 0.0201
+2026/04/07 22:19:24 - mmengine - INFO - The previous best checkpoint /root/autodl-tmp/auto_drive/GhostPIDNet/ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024/best_mIoU_iter_2000.pth is removed
+2026/04/07 22:19:24 - mmengine - INFO - The best checkpoint with 58.5200 mIoU at 3000 iter is saved to best_mIoU_iter_3000.pth.
+2026/04/07 22:19:47 - mmengine - INFO - Iter(train) [  3050/120000]  lr: 9.7710e-03  eta: 19:16:27  time: 0.4494  data_time: 0.0280  memory: 11224  loss: 2.5435  decode.loss_context: 0.7097  decode.loss_spatial: 0.3371  decode.loss_bd_laplacian: 0.6298  decode.loss_halo_feedback: 0.8669  decode.acc_seg: 89.1104
+2026/04/07 22:20:09 - mmengine - INFO - Iter(train) [  3100/120000]  lr: 9.7673e-03  eta: 19:11:23  time: 0.4452  data_time: 0.0261  memory: 11222  loss: 2.6604  decode.loss_context: 0.8106  decode.loss_spatial: 0.3473  decode.loss_bd_laplacian: 0.6056  decode.loss_halo_feedback: 0.8969  decode.acc_seg: 94.5445
+2026/04/07 22:20:32 - mmengine - INFO - Iter(train) [  3150/120000]  lr: 9.7635e-03  eta: 19:06:28  time: 0.4475  data_time: 0.0275  memory: 11227  loss: 2.5722  decode.loss_context: 0.7344  decode.loss_spatial: 0.3361  decode.loss_bd_laplacian: 0.6206  decode.loss_halo_feedback: 0.8812  decode.acc_seg: 93.2437
+2026/04/07 22:20:54 - mmengine - INFO - Iter(train) [  3200/120000]  lr: 9.7598e-03  eta: 19:01:41  time: 0.4467  data_time: 0.0272  memory: 11224  loss: 2.5170  decode.loss_context: 0.7116  decode.loss_spatial: 0.3358  decode.loss_bd_laplacian: 0.6042  decode.loss_halo_feedback: 0.8654  decode.acc_seg: 92.2680
