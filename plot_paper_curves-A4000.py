@@ -75,8 +75,11 @@ LOG_CONFIG = {
 # PIDNet 1xb6
 #"PIDNet Baseline 78.09 b6": "experiments/test-0324-4-pidnet-s_1xb6-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.09/20260324_114617/vis_data/scalars.json",
 # "PIDNet Opt3 1xb6": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb6-120k_1024x1024-cityscapes/20260404_044607/vis_data/scalars.json",
+
+# PIDNet 1xb6 acc2
+"PIDNet 1xb6 acc2 baseline": "work_dirs/halo-12-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260406_104654/vis_data/scalars.json",
 "PIDNet Dynamic5 1xb6 accu2": "work_dirs/halo-12-laplacian-loss-dynamic5-smooth-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260405_113125/vis_data/scalars.json",
-"PIDNet Dynamic6 1xb6 accu2": "work_dirs/halo-12-4-1-laplacian-loss-dynamic6-smooth-SRA-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260405_130203/vis_data/scalars.json",
+# "PIDNet Dynamic6 1xb6 accu2": "work_dirs/halo-12-4-1-laplacian-loss-dynamic6-smooth-SRA-1GPU-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes-accumulative2/20260405_130203/vis_data/scalars.json",
 # PIDNet No Pretrained
 # "Baseline no pretrained": "experiments/test-0320-6-pidnet-s-no-pretrained_baseline_warmup-2xb6-120k_1024x1024-cityscapes-A4000-76.50/20260320_095811/vis_data/scalars.json",
 # # # "Dynamic3 no pretrained": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",

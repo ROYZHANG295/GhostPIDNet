@@ -489,3 +489,4 @@ trtexec --loadEngine=spaceOptiConv_pidnet.trt --avgRuns=100 --duration=10 --useC
     --duration=10 \
     --useCudaGraph    
 
+Gemini:royzhang295@gmail.com Bbpp1234567890$
