@@ -1,0 +1,1075 @@
+2026/04/07 21:48:55 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.8.10 (default, Jun  4 2021, 15:09:15) [GCC 7.5.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 304
+    GPU 0: NVIDIA GeForce RTX 3090
+    CUDA_HOME: /usr/local/cuda
+    NVCC: Cuda compilation tools, release 11.8, V11.8.89
+    GCC: gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+    PyTorch: 2.0.0+cu118
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2022.2-Product Build 20220804 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.7.3 (Git Hash 6dbeffbae1f23cbbeae17adb7b5b13f1f37c080e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.8
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.7
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wunused-local-typedefs -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Werror=cast-function-type -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=ON, TORCH_VERSION=2.0.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.15.1+cu118
+    OpenCV: 4.12.0
+    MMEngine: 0.10.7
+
+Runtime environment:
+    cudnn_benchmark: True
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 304
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2026/04/07 21:48:55 - mmengine - INFO - Config:
+checkpoint = 'https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth'
+class_weight = [
+    0.8373,
+    0.918,
+    0.866,
+    1.0345,
+    1.0166,
+    0.9969,
+    0.9754,
+    1.0489,
+    0.8786,
+    1.0023,
+    0.9539,
+    0.9843,
+    1.1116,
+    0.9037,
+    1.0865,
+    1.0955,
+    1.0865,
+    1.1529,
+    1.0507,
+]
+crop_size = (
+    1024,
+    1024,
+)
+data_preprocessor = dict(
+    bgr_to_rgb=True,
+    mean=[
+        123.675,
+        116.28,
+        103.53,
+    ],
+    pad_val=0,
+    seg_pad_val=255,
+    size=(
+        1024,
+        1024,
+    ),
+    std=[
+        58.395,
+        57.12,
+        57.375,
+    ],
+    type='SegDataPreProcessor')
+data_root = 'data/cityscapes/'
+dataset_type = 'CityscapesDataset'
+default_hooks = dict(
+    checkpoint=dict(
+        by_epoch=False, interval=1000, save_best='mIoU',
+        type='CheckpointHook'),
+    logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='SegVisualizationHook'))
+default_scope = 'mmseg'
+env_cfg = dict(
+    cudnn_benchmark=True,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+img_ratios = [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+]
+iters = 120000
+launcher = 'none'
+load_from = None
+log_level = 'INFO'
+log_processor = dict(by_epoch=False)
+model = dict(
+    backbone=dict(
+        align_corners=False,
+        channels=32,
+        in_channels=3,
+        init_cfg=dict(
+            checkpoint=
+            'https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth',
+            type='Pretrained'),
+        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        ppm_channels=128,
+        type='DDRNet'),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_val=0,
+        seg_pad_val=255,
+        size=(
+            1024,
+            1024,
+        ),
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='SegDataPreProcessor'),
+    decode_head=dict(
+        align_corners=False,
+        channels=64,
+        dropout_ratio=0.0,
+        in_channels=128,
+        loss_decode=[
+            dict(
+                class_weight=[
+                    0.8373,
+                    0.918,
+                    0.866,
+                    1.0345,
+                    1.0166,
+                    0.9969,
+                    0.9754,
+                    1.0489,
+                    0.8786,
+                    1.0023,
+                    0.9539,
+                    0.9843,
+                    1.1116,
+                    0.9037,
+                    1.0865,
+                    1.0955,
+                    1.0865,
+                    1.1529,
+                    1.0507,
+                ],
+                loss_weight=1.0,
+                min_kept=131072,
+                thres=0.9,
+                type='OhemCrossEntropy'),
+            dict(
+                class_weight=[
+                    0.8373,
+                    0.918,
+                    0.866,
+                    1.0345,
+                    1.0166,
+                    0.9969,
+                    0.9754,
+                    1.0489,
+                    0.8786,
+                    1.0023,
+                    0.9539,
+                    0.9843,
+                    1.1116,
+                    0.9037,
+                    1.0865,
+                    1.0955,
+                    1.0865,
+                    1.1529,
+                    1.0507,
+                ],
+                loss_weight=0.4,
+                min_kept=131072,
+                thres=0.9,
+                type='OhemCrossEntropy'),
+        ],
+        max_iters=120000,
+        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        num_classes=19,
+        type='DDRHeadHALOAvg3OptSmooth'),
+    test_cfg=dict(mode='whole'),
+    train_cfg=dict(),
+    type='EncoderDecoder')
+norm_cfg = dict(requires_grad=True, type='SyncBN')
+optim_wrapper = dict(
+    clip_grad=None,
+    optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
+    type='OptimWrapper')
+optimizer = dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005)
+param_scheduler = [
+    dict(
+        begin=0,
+        by_epoch=False,
+        end=120000,
+        eta_min=0,
+        power=0.9,
+        type='PolyLR'),
+]
+randomness = dict(seed=304)
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                2048,
+                1024,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        2048,
+        1024,
+    ), type='Resize'),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs'),
+]
+train_cfg = dict(
+    max_iters=120000, type='IterBasedTrainLoop', val_interval=1000)
+train_dataloader = dict(
+    batch_size=12,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/train', seg_map_path='gtFine/train'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(
+                keep_ratio=True,
+                ratio_range=(
+                    0.5,
+                    2.0,
+                ),
+                scale=(
+                    2048,
+                    1024,
+                ),
+                type='RandomResize'),
+            dict(
+                cat_max_ratio=0.75,
+                crop_size=(
+                    1024,
+                    1024,
+                ),
+                type='RandomCrop'),
+            dict(prob=0.5, type='RandomFlip'),
+            dict(type='PhotoMetricDistortion'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='InfiniteSampler'))
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(
+        keep_ratio=True,
+        ratio_range=(
+            0.5,
+            2.0,
+        ),
+        scale=(
+            2048,
+            1024,
+        ),
+        type='RandomResize'),
+    dict(cat_max_ratio=0.75, crop_size=(
+        1024,
+        1024,
+    ), type='RandomCrop'),
+    dict(prob=0.5, type='RandomFlip'),
+    dict(type='PhotoMetricDistortion'),
+    dict(type='PackSegInputs'),
+]
+tta_model = dict(type='SegTTAModel')
+tta_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(
+        transforms=[
+            [
+                dict(keep_ratio=True, scale_factor=0.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=0.75, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.0, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.25, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.75, type='Resize'),
+            ],
+            [
+                dict(direction='horizontal', prob=0.0, type='RandomFlip'),
+                dict(direction='horizontal', prob=1.0, type='RandomFlip'),
+            ],
+            [
+                dict(type='LoadAnnotations'),
+            ],
+            [
+                dict(type='PackSegInputs'),
+            ],
+        ],
+        type='TestTimeAug'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
+        data_root='data/cityscapes/',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                2048,
+                1024,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='CityscapesDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = './ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024'
+
+2026/04/07 21:48:56 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2026/04/07 21:48:56 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2026/04/07 21:48:57 - mmengine - WARNING - The prefix is not set in metric class IoUMetric.
+2026/04/07 21:48:57 - mmengine - INFO - load model from: https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth
+2026/04/07 21:48:57 - mmengine - INFO - Loads checkpoint by http backend from path: https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth
+2026/04/07 21:48:57 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+missing keys in source state_dict: spp.scales.0.conv.weight, spp.scales.0.bn.weight, spp.scales.0.bn.bias, spp.scales.0.bn.running_mean, spp.scales.0.bn.running_var, spp.scales.1.1.conv.weight, spp.scales.1.1.bn.weight, spp.scales.1.1.bn.bias, spp.scales.1.1.bn.running_mean, spp.scales.1.1.bn.running_var, spp.scales.2.1.conv.weight, spp.scales.2.1.bn.weight, spp.scales.2.1.bn.bias, spp.scales.2.1.bn.running_mean, spp.scales.2.1.bn.running_var, spp.scales.3.1.conv.weight, spp.scales.3.1.bn.weight, spp.scales.3.1.bn.bias, spp.scales.3.1.bn.running_mean, spp.scales.3.1.bn.running_var, spp.scales.4.1.conv.weight, spp.scales.4.1.bn.weight, spp.scales.4.1.bn.bias, spp.scales.4.1.bn.running_mean, spp.scales.4.1.bn.running_var, spp.processes.0.conv.weight, spp.processes.0.bn.weight, spp.processes.0.bn.bias, spp.processes.0.bn.running_mean, spp.processes.0.bn.running_var, spp.processes.1.conv.weight, spp.processes.1.bn.weight, spp.processes.1.bn.bias, spp.processes.1.bn.running_mean, spp.processes.1.bn.running_var, spp.processes.2.conv.weight, spp.processes.2.bn.weight, spp.processes.2.bn.bias, spp.processes.2.bn.running_mean, spp.processes.2.bn.running_var, spp.processes.3.conv.weight, spp.processes.3.bn.weight, spp.processes.3.bn.bias, spp.processes.3.bn.running_mean, spp.processes.3.bn.running_var, spp.compression.conv.weight, spp.compression.bn.weight, spp.compression.bn.bias, spp.compression.bn.running_mean, spp.compression.bn.running_var, spp.shortcut.conv.weight, spp.shortcut.bn.weight, spp.shortcut.bn.bias, spp.shortcut.bn.running_mean, spp.shortcut.bn.running_var
+
+Name of parameter - Initialization information
+
+backbone.stem.0.conv.weight - torch.Size([32, 3, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.0.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.0.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.1.conv.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.1.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.1.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv1.conv.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv1.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv1.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv2.conv.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv2.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.0.conv2.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv1.conv.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv1.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv1.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv2.conv.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv2.bn.weight - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.2.1.conv2.bn.bias - torch.Size([32]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv1.conv.weight - torch.Size([64, 32, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.downsample.0.weight - torch.Size([64, 32, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.downsample.1.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.0.downsample.1.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv1.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.stem.4.1.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv1.conv.weight - torch.Size([128, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv1.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv1.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv2.conv.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv2.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.conv2.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.downsample.0.weight - torch.Size([128, 64, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.downsample.1.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.0.downsample.1.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv1.conv.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv1.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv1.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv2.conv.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv2.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.0.1.conv2.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv1.conv.weight - torch.Size([256, 128, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv1.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv1.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv2.conv.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv2.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.conv2.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.downsample.0.weight - torch.Size([256, 128, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.downsample.1.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.0.downsample.1.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv1.conv.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv1.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv1.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv2.conv.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv2.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.1.1.conv2.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv1.conv.weight - torch.Size([256, 256, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv1.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv1.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv2.conv.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv2.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv2.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv3.conv.weight - torch.Size([512, 256, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv3.bn.weight - torch.Size([512]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.conv3.bn.bias - torch.Size([512]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.downsample.0.weight - torch.Size([512, 256, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.downsample.1.weight - torch.Size([512]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.context_branch_layers.2.0.downsample.1.bias - torch.Size([512]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_1.conv.weight - torch.Size([64, 128, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_1.conv.weight - torch.Size([128, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_1.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_1.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_2.conv.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.compression_2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.0.conv.weight - torch.Size([128, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.0.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.0.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.1.conv.weight - torch.Size([256, 128, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.1.bn.weight - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.down_2.1.bn.bias - torch.Size([256]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv1.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.0.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv1.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.0.1.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv1.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.0.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv1.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.1.1.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv1.conv.weight - torch.Size([64, 64, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv1.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv1.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv2.conv.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv2.bn.weight - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv2.bn.bias - torch.Size([64]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv3.conv.weight - torch.Size([128, 64, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv3.bn.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.conv3.bn.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.downsample.0.weight - torch.Size([128, 64, 1, 1]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.downsample.1.weight - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spatial_branch_layers.2.0.downsample.1.bias - torch.Size([128]): 
+PretrainedInit: load from https://download.openmmlab.com/mmsegmentation/v0.5/ddrnet/pretrain/ddrnet23s-in1kpre_3rdparty-1ccac5b1.pth 
+
+backbone.spp.scales.0.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.scales.0.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.0.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.1.1.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.scales.1.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.1.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.2.1.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.scales.2.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.2.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.3.1.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.scales.3.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.3.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.4.1.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.scales.4.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.scales.4.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.0.conv.weight - torch.Size([128, 128, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.processes.0.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.0.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.1.conv.weight - torch.Size([128, 128, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.processes.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.2.conv.weight - torch.Size([128, 128, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.processes.2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.3.conv.weight - torch.Size([128, 128, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.processes.3.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.processes.3.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.compression.conv.weight - torch.Size([128, 640, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.compression.bn.weight - torch.Size([640]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.compression.bn.bias - torch.Size([640]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.shortcut.conv.weight - torch.Size([128, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+backbone.spp.shortcut.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.spp.shortcut.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.conv_seg.weight - torch.Size([19, 64, 1, 1]): 
+Initialized by user-defined `init_weights` in DDRHeadHALOAvg3OptSmooth  
+
+decode_head.conv_seg.bias - torch.Size([19]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.head.0.conv.weight - torch.Size([64, 128, 3, 3]): 
+Initialized by user-defined `init_weights` in DDRHeadHALOAvg3OptSmooth  
+
+decode_head.head.0.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.head.0.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.head.1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.head.1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.aux_head.0.conv.weight - torch.Size([64, 64, 3, 3]): 
+Initialized by user-defined `init_weights` in DDRHeadHALOAvg3OptSmooth  
+
+decode_head.aux_head.0.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.aux_head.0.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.aux_head.1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.aux_head.1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.aux_cls_seg.weight - torch.Size([19, 64, 1, 1]): 
+Initialized by user-defined `init_weights` in DDRHeadHALOAvg3OptSmooth  
+
+decode_head.aux_cls_seg.bias - torch.Size([19]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.bd_cls_seg.weight - torch.Size([1, 64, 1, 1]): 
+Initialized by user-defined `init_weights` in DDRHeadHALOAvg3OptSmooth  
+
+decode_head.bd_cls_seg.bias - torch.Size([1]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+2026/04/07 21:48:58 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2026/04/07 21:48:58 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2026/04/07 21:48:58 - mmengine - INFO - Checkpoints will be saved to /root/autodl-tmp/auto_drive/GhostPIDNet/ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024.
+2026/04/07 21:49:47 - mmengine - INFO - Iter(train) [    50/120000]  lr: 9.9963e-03  eta: 1 day, 8:42:35  time: 0.8288  data_time: 0.0258  memory: 16351  loss: 3.8804  decode.loss_context: 1.0639  decode.loss_spatial: 0.5557  decode.loss_bd_laplacian: 0.8704  decode.loss_halo_feedback: 1.3904  decode.acc_seg: 85.0710
+2026/04/07 21:50:21 - mmengine - INFO - Iter(train) [   100/120000]  lr: 9.9926e-03  eta: 1 day, 3:54:44  time: 0.7863  data_time: 0.0258  memory: 11251  loss: 3.4556  decode.loss_context: 0.9585  decode.loss_spatial: 0.4889  decode.loss_bd_laplacian: 0.7841  decode.loss_halo_feedback: 1.2241  decode.acc_seg: 80.1538
+2026/04/07 21:51:03 - mmengine - INFO - Iter(train) [   150/120000]  lr: 9.9888e-03  eta: 1 day, 3:48:23  time: 0.8152  data_time: 0.0246  memory: 11253  loss: 3.2590  decode.loss_context: 0.8693  decode.loss_spatial: 0.4609  decode.loss_bd_laplacian: 0.7598  decode.loss_halo_feedback: 1.1690  decode.acc_seg: 79.4544
+2026/04/07 21:51:44 - mmengine - INFO - Iter(train) [   200/120000]  lr: 9.9851e-03  eta: 1 day, 3:45:30  time: 0.8291  data_time: 0.0251  memory: 11248  loss: 3.0719  decode.loss_context: 0.8274  decode.loss_spatial: 0.4191  decode.loss_bd_laplacian: 0.7274  decode.loss_halo_feedback: 1.0980  decode.acc_seg: 89.7590
+2026/04/07 21:52:24 - mmengine - INFO - Exp name: halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024_20260407_214854
+2026/04/07 21:52:25 - mmengine - INFO - Iter(train) [   250/120000]  lr: 9.9813e-03  eta: 1 day, 3:39:25  time: 0.8150  data_time: 0.0240  memory: 11235  loss: 3.0716  decode.loss_context: 0.8311  decode.loss_spatial: 0.4621  decode.loss_bd_laplacian: 0.7129  decode.loss_halo_feedback: 1.0655  decode.acc_seg: 87.6995
+2026/04/07 21:53:06 - mmengine - INFO - Iter(train) [   300/120000]  lr: 9.9776e-03  eta: 1 day, 3:35:39  time: 0.8232  data_time: 0.0248  memory: 11239  loss: 2.9384  decode.loss_context: 0.7771  decode.loss_spatial: 0.3878  decode.loss_bd_laplacian: 0.7047  decode.loss_halo_feedback: 1.0687  decode.acc_seg: 90.4138
+2026/04/07 21:53:48 - mmengine - INFO - Iter(train) [   350/120000]  lr: 9.9738e-03  eta: 1 day, 3:34:33  time: 0.8357  data_time: 0.0267  memory: 11236  loss: 2.9732  decode.loss_context: 0.7754  decode.loss_spatial: 0.4132  decode.loss_bd_laplacian: 0.7153  decode.loss_halo_feedback: 1.0692  decode.acc_seg: 89.3266
+2026/04/07 21:54:29 - mmengine - INFO - Iter(train) [   400/120000]  lr: 9.9701e-03  eta: 1 day, 3:32:38  time: 0.8296  data_time: 0.0245  memory: 11231  loss: 2.9366  decode.loss_context: 0.8303  decode.loss_spatial: 0.4151  decode.loss_bd_laplacian: 0.6855  decode.loss_halo_feedback: 1.0058  decode.acc_seg: 92.6710
+2026/04/07 21:55:10 - mmengine - INFO - Iter(train) [   450/120000]  lr: 9.9663e-03  eta: 1 day, 3:29:42  time: 0.8212  data_time: 0.0239  memory: 11235  loss: 2.8468  decode.loss_context: 0.7668  decode.loss_spatial: 0.3628  decode.loss_bd_laplacian: 0.6836  decode.loss_halo_feedback: 1.0336  decode.acc_seg: 89.4470
+2026/04/07 21:55:51 - mmengine - INFO - Iter(train) [   500/120000]  lr: 9.9626e-03  eta: 1 day, 3:27:57  time: 0.8205  data_time: 0.0249  memory: 11231  loss: 2.7539  decode.loss_context: 0.7371  decode.loss_spatial: 0.3735  decode.loss_bd_laplacian: 0.6787  decode.loss_halo_feedback: 0.9646  decode.acc_seg: 85.8070
+2026/04/07 21:56:33 - mmengine - INFO - Iter(train) [   550/120000]  lr: 9.9588e-03  eta: 1 day, 3:27:04  time: 0.8383  data_time: 0.0247  memory: 11234  loss: 2.8497  decode.loss_context: 0.7979  decode.loss_spatial: 0.3805  decode.loss_bd_laplacian: 0.6741  decode.loss_halo_feedback: 0.9971  decode.acc_seg: 90.1005
+2026/04/07 21:57:13 - mmengine - INFO - Iter(train) [   600/120000]  lr: 9.9551e-03  eta: 1 day, 3:24:01  time: 0.8075  data_time: 0.0234  memory: 11225  loss: 2.9495  decode.loss_context: 0.8270  decode.loss_spatial: 0.4248  decode.loss_bd_laplacian: 0.6764  decode.loss_halo_feedback: 1.0214  decode.acc_seg: 90.2363
+2026/04/07 21:57:51 - mmengine - INFO - Iter(train) [   650/120000]  lr: 9.9513e-03  eta: 1 day, 3:12:59  time: 0.6180  data_time: 0.0263  memory: 11237  loss: 2.7784  decode.loss_context: 0.7564  decode.loss_spatial: 0.3786  decode.loss_bd_laplacian: 0.6614  decode.loss_halo_feedback: 0.9819  decode.acc_seg: 90.3627
+2026/04/07 21:58:29 - mmengine - INFO - Iter(train) [   700/120000]  lr: 9.9476e-03  eta: 1 day, 3:03:51  time: 0.8215  data_time: 0.0257  memory: 11228  loss: 2.8461  decode.loss_context: 0.7976  decode.loss_spatial: 0.4027  decode.loss_bd_laplacian: 0.6696  decode.loss_halo_feedback: 0.9761  decode.acc_seg: 92.5549
+2026/04/07 21:59:10 - mmengine - INFO - Iter(train) [   750/120000]  lr: 9.9438e-03  eta: 1 day, 3:03:07  time: 0.8162  data_time: 0.0249  memory: 11227  loss: 2.8052  decode.loss_context: 0.7924  decode.loss_spatial: 0.3691  decode.loss_bd_laplacian: 0.6770  decode.loss_halo_feedback: 0.9667  decode.acc_seg: 91.1152
+2026/04/07 21:59:51 - mmengine - INFO - Iter(train) [   800/120000]  lr: 9.9401e-03  eta: 1 day, 3:02:52  time: 0.8229  data_time: 0.0254  memory: 11229  loss: 2.7429  decode.loss_context: 0.7203  decode.loss_spatial: 0.3971  decode.loss_bd_laplacian: 0.6624  decode.loss_halo_feedback: 0.9631  decode.acc_seg: 92.8690
+2026/04/07 22:00:32 - mmengine - INFO - Iter(train) [   850/120000]  lr: 9.9363e-03  eta: 1 day, 3:02:24  time: 0.8226  data_time: 0.0252  memory: 11234  loss: 2.8677  decode.loss_context: 0.7871  decode.loss_spatial: 0.3849  decode.loss_bd_laplacian: 0.6780  decode.loss_halo_feedback: 1.0176  decode.acc_seg: 86.7194
+2026/04/07 22:01:13 - mmengine - INFO - Iter(train) [   900/120000]  lr: 9.9325e-03  eta: 1 day, 3:02:11  time: 0.8145  data_time: 0.0248  memory: 11232  loss: 2.7565  decode.loss_context: 0.7809  decode.loss_spatial: 0.3727  decode.loss_bd_laplacian: 0.6527  decode.loss_halo_feedback: 0.9502  decode.acc_seg: 91.8740
+2026/04/07 22:01:54 - mmengine - INFO - Iter(train) [   950/120000]  lr: 9.9288e-03  eta: 1 day, 3:02:01  time: 0.8242  data_time: 0.0265  memory: 11234  loss: 3.0146  decode.loss_context: 0.8994  decode.loss_spatial: 0.4186  decode.loss_bd_laplacian: 0.6725  decode.loss_halo_feedback: 1.0241  decode.acc_seg: 91.3227
+2026/04/07 22:02:35 - mmengine - INFO - Exp name: halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024_20260407_214854
+2026/04/07 22:02:35 - mmengine - INFO - Iter(train) [  1000/120000]  lr: 9.9250e-03  eta: 1 day, 3:02:02  time: 0.8230  data_time: 0.0279  memory: 11225  loss: 2.7281  decode.loss_context: 0.7479  decode.loss_spatial: 0.3664  decode.loss_bd_laplacian: 0.6658  decode.loss_halo_feedback: 0.9481  decode.acc_seg: 90.9674
+2026/04/07 22:02:35 - mmengine - INFO - Saving checkpoint at 1000 iterations
+2026/04/07 22:02:39 - mmengine - INFO - Iter(val) [ 50/500]    eta: 0:00:26  time: 0.0332  data_time: 0.0047  memory: 405  
+2026/04/07 22:02:40 - mmengine - INFO - Iter(val) [100/500]    eta: 0:00:18  time: 0.0341  data_time: 0.0048  memory: 405  
+2026/04/07 22:02:42 - mmengine - INFO - Iter(val) [150/500]    eta: 0:00:14  time: 0.0326  data_time: 0.0046  memory: 405  
+2026/04/07 22:02:44 - mmengine - INFO - Iter(val) [200/500]    eta: 0:00:12  time: 0.0337  data_time: 0.0045  memory: 405  
+2026/04/07 22:02:45 - mmengine - INFO - Iter(val) [250/500]    eta: 0:00:09  time: 0.0328  data_time: 0.0047  memory: 405  
+2026/04/07 22:02:47 - mmengine - INFO - Iter(val) [300/500]    eta: 0:00:07  time: 0.0333  data_time: 0.0047  memory: 405  
+2026/04/07 22:02:49 - mmengine - INFO - Iter(val) [350/500]    eta: 0:00:05  time: 0.0344  data_time: 0.0048  memory: 405  
+2026/04/07 22:02:51 - mmengine - INFO - Iter(val) [400/500]    eta: 0:00:03  time: 0.0343  data_time: 0.0047  memory: 405  
+2026/04/07 22:02:52 - mmengine - INFO - Iter(val) [450/500]    eta: 0:00:01  time: 0.0341  data_time: 0.0046  memory: 405  
+2026/04/07 22:02:54 - mmengine - INFO - Iter(val) [500/500]    eta: 0:00:00  time: 0.0350  data_time: 0.0045  memory: 405  
+2026/04/07 22:02:54 - mmengine - INFO - per class results:
+2026/04/07 22:02:54 - mmengine - INFO - 
++---------------+-------+-------+
+|     Class     |  IoU  |  Acc  |
++---------------+-------+-------+
+|      road     | 96.27 |  98.0 |
+|    sidewalk   | 73.35 | 84.73 |
+|    building   | 86.89 | 94.56 |
+|      wall     |  33.3 | 41.04 |
+|     fence     | 34.53 | 52.97 |
+|      pole     | 42.72 | 50.17 |
+| traffic light | 40.16 |  46.1 |
+|  traffic sign |  57.5 | 66.43 |
+|   vegetation  | 88.97 | 94.55 |
+|    terrain    | 48.37 | 65.59 |
+|      sky      | 89.48 | 97.05 |
+|     person    | 66.77 | 76.01 |
+|     rider     | 26.76 | 31.06 |
+|      car      | 87.21 | 95.05 |
+|     truck     | 19.91 | 25.36 |
+|      bus      |  41.5 | 55.55 |
+|     train     | 34.82 | 50.73 |
+|   motorcycle  | 24.65 | 33.88 |
+|    bicycle    | 63.51 | 80.99 |
++---------------+-------+-------+
+2026/04/07 22:02:54 - mmengine - INFO - Iter(val) [500/500]    aAcc: 92.5900  mIoU: 55.6100  mAcc: 65.2500  data_time: 0.0051  time: 0.0365
+2026/04/07 22:02:54 - mmengine - INFO - The best checkpoint with 55.6100 mIoU at 1000 iter is saved to best_mIoU_iter_1000.pth.
+2026/04/07 22:03:36 - mmengine - INFO - Iter(train) [  1050/120000]  lr: 9.9213e-03  eta: 1 day, 3:02:36  time: 0.8117  data_time: 0.0262  memory: 11233  loss: 2.7357  decode.loss_context: 0.7725  decode.loss_spatial: 0.3700  decode.loss_bd_laplacian: 0.6445  decode.loss_halo_feedback: 0.9487  decode.acc_seg: 92.7326
+2026/04/07 22:04:17 - mmengine - INFO - Iter(train) [  1100/120000]  lr: 9.9175e-03  eta: 1 day, 3:02:38  time: 0.8377  data_time: 0.0277  memory: 11219  loss: 2.7587  decode.loss_context: 0.7537  decode.loss_spatial: 0.3952  decode.loss_bd_laplacian: 0.6536  decode.loss_halo_feedback: 0.9562  decode.acc_seg: 91.6061
+2026/04/07 22:04:58 - mmengine - INFO - Iter(train) [  1150/120000]  lr: 9.9138e-03  eta: 1 day, 3:01:41  time: 0.8106  data_time: 0.0266  memory: 11232  loss: 2.8965  decode.loss_context: 0.8543  decode.loss_spatial: 0.4017  decode.loss_bd_laplacian: 0.6539  decode.loss_halo_feedback: 0.9866  decode.acc_seg: 90.8513
+2026/04/07 22:05:34 - mmengine - INFO - Iter(train) [  1200/120000]  lr: 9.9100e-03  eta: 1 day, 2:52:58  time: 0.6136  data_time: 0.0271  memory: 11226  loss: 2.7820  decode.loss_context: 0.8137  decode.loss_spatial: 0.3823  decode.loss_bd_laplacian: 0.6401  decode.loss_halo_feedback: 0.9460  decode.acc_seg: 88.5779
+2026/04/07 22:05:58 - mmengine - INFO - Iter(train) [  1250/120000]  lr: 9.9063e-03  eta: 1 day, 2:25:54  time: 0.4527  data_time: 0.0274  memory: 11222  loss: 2.6772  decode.loss_context: 0.7280  decode.loss_spatial: 0.3815  decode.loss_bd_laplacian: 0.6474  decode.loss_halo_feedback: 0.9203  decode.acc_seg: 92.5578
+2026/04/07 22:06:20 - mmengine - INFO - Iter(train) [  1300/120000]  lr: 9.9025e-03  eta: 1 day, 1:58:14  time: 0.4427  data_time: 0.0276  memory: 11232  loss: 2.6546  decode.loss_context: 0.7720  decode.loss_spatial: 0.3259  decode.loss_bd_laplacian: 0.6505  decode.loss_halo_feedback: 0.9062  decode.acc_seg: 92.3436
+2026/04/07 22:06:42 - mmengine - INFO - Iter(train) [  1350/120000]  lr: 9.8988e-03  eta: 1 day, 1:32:27  time: 0.4440  data_time: 0.0261  memory: 11226  loss: 2.8873  decode.loss_context: 0.8873  decode.loss_spatial: 0.3891  decode.loss_bd_laplacian: 0.6339  decode.loss_halo_feedback: 0.9769  decode.acc_seg: 85.4876
+2026/04/07 22:07:05 - mmengine - INFO - Iter(train) [  1400/120000]  lr: 9.8950e-03  eta: 1 day, 1:08:55  time: 0.4473  data_time: 0.0272  memory: 11233  loss: 2.7134  decode.loss_context: 0.7622  decode.loss_spatial: 0.3803  decode.loss_bd_laplacian: 0.6454  decode.loss_halo_feedback: 0.9256  decode.acc_seg: 91.0335
+2026/04/07 22:07:27 - mmengine - INFO - Iter(train) [  1450/120000]  lr: 9.8913e-03  eta: 1 day, 0:46:46  time: 0.4454  data_time: 0.0275  memory: 11227  loss: 2.6548  decode.loss_context: 0.7722  decode.loss_spatial: 0.3710  decode.loss_bd_laplacian: 0.6380  decode.loss_halo_feedback: 0.8736  decode.acc_seg: 94.1223
+2026/04/07 22:07:50 - mmengine - INFO - Iter(train) [  1500/120000]  lr: 9.8875e-03  eta: 1 day, 0:26:01  time: 0.4459  data_time: 0.0269  memory: 11228  loss: 2.7610  decode.loss_context: 0.7979  decode.loss_spatial: 0.3849  decode.loss_bd_laplacian: 0.6318  decode.loss_halo_feedback: 0.9464  decode.acc_seg: 89.7559
