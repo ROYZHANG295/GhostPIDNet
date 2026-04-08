@@ -50,24 +50,25 @@ class BasePIDHead(BaseModule):
 class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
     """
     ===========================================================================
-    🏆 HALO: Topology-Aware Boundary Supervision (通用框架版 - PIDNet)
+    🏆 HALO: Topology-Aware Boundary Supervision (通用解耦框架版 - PIDNet)
     ===========================================================================
     【Universal Framework 跨架构大一统】
     
-    为了证明 HALO 框架的绝对普适性，PIDNet 采用了与 DDRNet 完全一致的超参数与核心逻辑：
+    为了证明 HALO 框架的绝对普适性，PIDNet 采用了与 DDRNet 完全一致的【权重解耦架构】，
+    但根据 PIDNet D分支容量极大的物理特性，配置了专属的“架构感知(Architecture-Aware)”参数：
     
-    1. 绝杀机制：跨分支先知反哺 (Cross-Branch Oracle Feedback)
-       PIDNet 的 D 分支 (Boundary) 充当先知，预测高频边界掩码。
-       利用该掩码过滤真值，生成极其严苛的“纯边界语义标签”。
-       将此标签作为强监督信号，直接砸向 I 分支 (Context 主干)，实现跨分支知识注入！
+    1. 内部监督 (dice_w): 采用 3.0 -> 1.0 -> 0.5 的激进衰减。
+       前期下猛药(3.0)瞬间唤醒庞大的 D 分支，迫使其画出极其锐利的物理边界；
+       后期平滑降权，防止过拟合。
        
-    2. 大一统的三阶段硬跳变 (Universal Piecewise-Constant Scheduler)
-       无论是双分支还是三分支，统统采用：
-       - 阶段 1 (0~33.3%): Dilation=5, Weight=1.0 (强先验注入)
-       - 阶段 2 (33.3%~66.7%): Dilation=4, Weight=0.5 (温和细化期)
-       - 阶段 3 (66.7%~100%): Dilation=3, Weight=0.1 (语义解放期)
+    2. 外部反哺 (fb_w): 采用 1.0 -> 1.0 -> 1.0 的恒定稳压器。
+       无论 D 分支内部的 loss 权重有多高，砸向 I 分支(主干)的反馈权重始终锁定在 1.0。
+       这完美解决了前期 3.0 权重带来的“毒反馈(Toxic Feedback)”和“语义坍塌”问题！
        
-    不调参，不搞特殊化，一套逻辑打穿所有 Real-Time 架构！
+    3. 三阶段硬跳变调度 (Universal Piecewise-Constant Scheduler):
+       - 阶段 1 (0~33.3%): Dilation=5, dice_w=3.0, fb_w=1.0
+       - 阶段 2 (33.3%~66.7%): Dilation=4, dice_w=1.0, fb_w=1.0
+       - 阶段 3 (66.7%~100%): Dilation=3, dice_w=0.5, fb_w=1.0
     ===========================================================================
     """
     
@@ -98,7 +99,7 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         self.p_cls_seg = nn.Conv2d(channels, self.out_channels, kernel_size=1)
         self.d_cls_seg = nn.Conv2d(in_channels // 4, 1, kernel_size=1)
 
-        # 【统一化】：采用和 DDRNet 完全一致的三阶段均分调度表
+        # 【统一化】：采用解耦后的三阶段均分调度表
         self.dynamic_schedule = self._build_avg3_schedule(self.max_iters)
 
     def init_weights(self):
@@ -170,24 +171,24 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         return boundary_map.squeeze(1)
 
     # =========================================================================
-    # 2. 大一统的分阶段硬跳变调度器 (Universal Piecewise-Constant Scheduler)
+    # 2. 大一统的分阶段硬跳变解耦调度器 (Decoupled Piecewise-Constant Scheduler)
     # =========================================================================
     def _build_avg3_schedule(self, max_iters: int) -> dict:
         t1 = int(max_iters / 3.0)
         t2 = int(max_iters * 2.0 / 3.0)
 
-        # 【统一化】：和 DDRNet 完全一致的极简参数
+        # 【解耦化】：dice_w 采用 3.0->1.0->0.5，fb_w 恒定 1.0 保护主干
         schedule = {
-            0:         {'dilation': 5, 'dice_w': 1.0},
-            t1:        {'dilation': 5, 'dice_w': 1.0},
-            t1 + 1:    {'dilation': 4, 'dice_w': 0.5},
-            t2:        {'dilation': 4, 'dice_w': 0.5},
-            t2 + 1:    {'dilation': 3, 'dice_w': 0.1},
-            max_iters: {'dilation': 3, 'dice_w': 0.1}
+            0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+            t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+            t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
+            t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
+            t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1},
+            max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1}
         }
         return schedule
 
-    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float]:
+    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
         schedule = self.dynamic_schedule
         milestones = sorted(schedule.keys())
         
@@ -198,7 +199,8 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
                 break
                 
         cfg = schedule[start_step]
-        return cfg['dilation'], cfg['dice_w']
+        # 返回完全解耦的三个参数
+        return cfg['dilation'], cfg['dice_w'], cfg['fb_w']
 
     def loss_by_feat(self, seg_logits: Tuple[Tensor], batch_data_samples: SampleList) -> dict:
         
@@ -206,7 +208,8 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
             self.local_step += 1
         current_step = self.local_step.item()
         
-        cur_dilation, cur_dice_w = self._get_dynamic_params(current_step)
+        # 接收解耦后的三个参数
+        cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
 
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits
@@ -226,7 +229,7 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         loss['loss_sem_p'] = self.loss_decode[0](p_logit, sem_label, ignore_index=self.ignore_index)
         loss['loss_sem_i'] = self.loss_decode[1](i_logit, sem_label)
         
-        # 2. 联合边界损失 (D 分支)
+        # 2. 联合边界损失 (D 分支内部监督)
         bce_loss = self.loss_decode[2](d_logit, bd_label)
         pred_sigmoid = torch.sigmoid(d_logit[:, 0, :, :])
         
@@ -235,12 +238,12 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         union = (pred_sigmoid * valid_mask).sum(dim=(1, 2)) + (bd_label * valid_mask).sum(dim=(1, 2))
         dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
         
+        # 内部监督使用激进的 cur_dice_w
         loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
         
         # =====================================================================
         # 🚀 绝杀机制：跨分支先知反哺 (Cross-Branch Oracle Feedback) 🚀
         # =====================================================================
-        # 【统一化】：和 DDRNet 完全一致的逻辑！
         # 提取 D 分支 (先知) 预测的边界掩码 (统一固定阈值 0.5)
         bd_pred_mask = (pred_sigmoid > 0.5)
         
@@ -248,8 +251,9 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         filler = torch.ones_like(sem_label) * self.ignore_index
         halo_label = torch.where(bd_pred_mask, sem_label, filler)
         
-        # 将严苛的边界标签砸向 I 分支！乘以 cur_dice_w 控制反哺力度，防止后期震荡！
-        loss['loss_halo_feedback'] = self.loss_decode[3](i_logit, halo_label) * cur_dice_w
+        # 将严苛的边界标签砸向 I 分支！
+        # 【核心修改】：乘以独立的稳压器 cur_fb_w，完美保护主干网络！
+        loss['loss_halo_feedback'] = self.loss_decode[3](i_logit, halo_label) * cur_fb_w
         
         # 4. 准确率统计
         loss['acc_seg'] = accuracy(i_logit, sem_label, ignore_index=self.ignore_index)
