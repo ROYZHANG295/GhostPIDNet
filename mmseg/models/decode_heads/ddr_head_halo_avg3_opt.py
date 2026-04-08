@@ -20,7 +20,7 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
     ===========================================================================
     🏆 HALO: Holistic Asymmetric Laplacian Oracle (全局非对称拉普拉斯先知)
     ===========================================================================
-    【论文核心故事线 (The Grand Story) - 跨分支反哺版】：
+    【论文核心故事线 (The Grand Story) - 跨分支反哺解耦版】：
     
     1. 痛点 (The Trap of Two-Branch Networks)：
        DDRNet 这种实时网络在推理时【仅保留 Context 主干分支】，完全丢弃 Spatial 分支。
@@ -31,13 +31,17 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
        打破分支壁垒！我们让高分辨率的 Spatial 分支充当“边界先知(Oracle)”，
        预测出高频边界。然后，利用该预测结果掩蔽(Mask)真值标签，生成极其严苛的
        【纯边界语义标签】，并将其直接作为强监督信号【砸向 Context 分支】！
-       迫使主干网络在低分辨率下也能学到极其锐利的物理边界。推理时 0 负担！
+       迫使主干网络在低分辨率下也能学到极其锐利的物理边界。推理时 0 FLOPs 增加！
        
-    3. 创新 2 (全局均分三阶段课程学习 Holistic Average 3-Stage Curriculum)：
-       配合 1.0 -> 0.5 -> 0.1 的动态权重衰减：
-       - 阶段 1 (0~33.3%): 强先验期 (Weight=1.0)，因为反哺 Loss 极其稀疏，必须用 1.0 施压。
-       - 阶段 2 (33.3%~66.7%): 平滑衰减期 (Weight=0.5)，防止冲垮主干全局语义。
-       - 阶段 3 (66.7%~100%): 极速冲刺期 (Weight=0.1)，留下长达 33.3% 的微调期彻底抚平震荡。
+    3. 创新 2 (Decoupled Dynamic Weighting 解耦动态权重调度)：
+       【核心】：将边界自监督权重 (dice_w) 与跨分支反哺权重 (fb_w) 物理层面解耦！
+       虽然在 DDRNet 中两者数值同步衰减，但这一架构完美支持了 PIDNet 等大容量网络
+       对边界分支施加极高初始权重(如 3.0)，同时使用稳压器(fb_w=1.0)保护主干网络的策略。
+       
+       本代码（DDRNet配置）采用 1.0 -> 0.5 -> 0.1 的均分三阶段衰减：
+       - 阶段 1 (0~33.3%): 强先验期 (dice_w=1.0, fb_w=1.0)。
+       - 阶段 2 (33.3%~66.7%): 平滑衰减期 (dice_w=0.5, fb_w=0.5)，防止冲垮主干。
+       - 阶段 3 (66.7%~100%): 极速冲刺期 (dice_w=0.1, fb_w=0.1)，彻底抚平震荡。
     ===========================================================================
     """
 
@@ -71,7 +75,7 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         self.bd_cls_seg = nn.Conv2d(self.channels, 1, kernel_size=1)
 
         # =====================================================================
-        # 【HALO 核心引擎】：初始化时自动计算三阶段均分调度表
+        # 【HALO 核心引擎】：初始化时自动计算三阶段均分解耦调度表
         # =====================================================================
         self.dynamic_schedule = self._build_avg3_schedule(self.max_iters)
 
@@ -145,35 +149,41 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         return (boundary_map * valid_mask).squeeze(1)
 
     # =========================================================================
-    # 【修改点 4】：自适应均分三阶段课程学习调度器 (Holistic Average 3-Stage Curriculum)
+    # 【修改点 4】：自适应均分三阶段课程学习调度器 (解耦版)
     # =========================================================================
     def _build_avg3_schedule(self, max_iters: int) -> dict:
-        """根据总训练步数，自动计算三阶段平均分割点，完美解决后期震荡！"""
+        """根据总训练步数，自动计算三阶段平均分割点，完美解耦内部监督与外部反哺！"""
         t1 = int(max_iters / 3.0)      # 三等分点 1 (33.3%)
         t2 = int(max_iters * 2.0 / 3.0)  # 三等分点 2 (66.7%)
 
         schedule = {
-            # 阶段1：权重恢复到 1.0 (强先验期)
-            # 原因：反哺 Loss 极其稀疏，必须用 1.0 才能让 Context 主干感受到压力
-            0:      {'dilation': 5, 'dice_w': 1.0},
-            t1:     {'dilation': 5, 'dice_w': 1.0},
-            # 阶段2：权重降至 0.5 (平滑衰减期)
-            t1 + 1: {'dilation': 4, 'dice_w': 0.5},
-            t2:     {'dilation': 4, 'dice_w': 0.5},
-            # 阶段3：权重降至 0.1 (极速冲刺期)
-            t2 + 1: {'dilation': 3, 'dice_w': 0.1},
-            max_iters: {'dilation': 3, 'dice_w': 0.1}
+            # 阶段1：强先验期
+            # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+            0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+            # 阶段2：平滑衰减期
+            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+            # 阶段3：极速冲刺期 (语义解放)
+            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
+            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
         }
 
         return schedule
 
-    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float]:
-        """读取动态参数，执行平滑衰减"""
+    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
+        """读取动态参数，执行平滑衰减，返回完全解耦的参数"""
         schedule = self.dynamic_schedule
         milestones = sorted(schedule.keys())
         
-        if current_step <= milestones[0]: return schedule[milestones[0]]['dilation'], schedule[milestones[0]]['dice_w']
-        if current_step >= milestones[-1]: return schedule[milestones[-1]]['dilation'], schedule[milestones[-1]]['dice_w']
+        if current_step <= milestones[0]: 
+            cfg = schedule[milestones[0]]
+            return cfg['dilation'], cfg['dice_w'], cfg['fb_w']
+        if current_step >= milestones[-1]: 
+            cfg = schedule[milestones[-1]]
+            return cfg['dilation'], cfg['dice_w'], cfg['fb_w']
             
         start_step, end_step = milestones[0], milestones[-1]
         for i in range(len(milestones) - 1):
@@ -185,23 +195,24 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         progress = (current_step - start_step) / float(end_step - start_step)
         
         cur_dilation = start_cfg['dilation']
-        # Dice 权重执行平滑线性插值
+        # 独立执行线性插值，彻底解耦
         cur_dice_w = start_cfg['dice_w'] + progress * (end_cfg['dice_w'] - start_cfg['dice_w'])
+        cur_fb_w = start_cfg['fb_w'] + progress * (end_cfg['fb_w'] - start_cfg['fb_w'])
         
-        return cur_dilation, cur_dice_w
+        return cur_dilation, cur_dice_w, cur_fb_w
 
     def loss_by_feat(self, seg_logits: Tuple[Tensor], batch_data_samples: SampleList) -> dict:
         
         # =====================================================================
-        # 【修改点 5】：最终损失函数计算逻辑 (跨分支反哺版)
+        # 【修改点 5】：最终损失函数计算逻辑 (跨分支反哺解耦版)
         # =====================================================================
         
         if self.training:
             self.local_step += 1
         current_step = self.local_step.item()
         
-        # 获取当前步数对应的三阶段均分动态参数
-        cur_dilation, cur_dice_w = self._get_dynamic_params(current_step)
+        # 获取解耦后的动态参数：cur_fb_w 现已独立！
+        cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
 
         loss = dict()
         context_logit, spatial_logit, bd_logit = seg_logits
@@ -222,7 +233,7 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         loss['loss_context'] = self.loss_decode[0](context_logit, seg_label)
         loss['loss_spatial'] = self.loss_decode[1](spatial_logit, seg_label)
         
-        # 2. 计算 HALO 新增的、带动态权重的【联合边界损失】
+        # 2. 边界分支内部 Loss (使用 cur_dice_w)
         bce_loss = F.binary_cross_entropy_with_logits(bd_logit.squeeze(1), bd_label)
         
         pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
@@ -231,7 +242,7 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         union = (pred_sigmoid * valid_mask).sum(dim=(1, 2)) + (bd_label * valid_mask).sum(dim=(1, 2))
         dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
         
-        # 核心：动态加权
+        # 核心：内部监督使用独立加权
         loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
         
         # =====================================================================
@@ -244,11 +255,12 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         filler = torch.ones_like(seg_label) * self.ignore_index
         halo_label = torch.where(bd_pred_mask, seg_label, filler)
         
-        # 【致胜一击】：将这个极其严苛的边界标签，直接作为强监督信号砸向 Context 分支 (context_logit)！
-        # 乘以 cur_dice_w (1.0 -> 0.5 -> 0.1) 控制反哺力度，平滑衰减防止后期震荡！
-        loss['loss_halo_feedback'] = self.loss_decode[0](context_logit, halo_label) * cur_dice_w
+        # 【致胜一击】：将严苛的边界标签砸向 Context 分支！
+        # 使用独立的 cur_fb_w 控制反哺力度，彻底解耦！
+        loss['loss_halo_feedback'] = self.loss_decode[0](context_logit, halo_label) * cur_fb_w
         
         # 3. 算个准确率汇报一下 (基于主干 Context 分支的预测)
         loss['acc_seg'] = accuracy(context_logit, seg_label, ignore_index=self.ignore_index)
 
         return loss
+
