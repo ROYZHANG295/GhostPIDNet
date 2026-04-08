@@ -18,43 +18,12 @@ from mmseg.utils import OptConfigType, SampleList
 class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
     """
     ===========================================================================
-    🏆 HALO: Holistic Asymmetric Laplacian Oracle (全局非对称拉普拉斯先知)
+    🏆 HALO: Holistic Asymmetric Laplacian Oracle
     ===========================================================================
-    
-    【Table 3 消融实验 (Ablation Study) 终极配置指南】
-    通过修改以下参数，可一键复现论文中的所有消融节点与崩溃曲线：
-
-    [1] Baseline (原版 DDRNet):
-        use_boundary = False
-        (其余参数随意，因为根本不走边界计算分支)
-
-    [2] + Online Laplacian Boundary:
-        use_boundary = True
-        use_dynamic_dilation = False (使用固定粗细的边界)
-        static_dilation_val = 3      (固定宽度为 3)
-        scheduler_type = 'constant'  (权重死锁 1.0)
-        use_oracle_feedback = False  (不反哺，仅监督 Spatial 分支)
-
-    [3] + Dynamic Dilation (证明 5->4->3 优于固定 3):
-        use_boundary = True
-        use_dynamic_dilation = True  (开启 5->4->3 动态膨胀)
-        scheduler_type = 'constant'  (权重依然死锁 1.0)
-        use_oracle_feedback = False
-
-    [4] + Piecewise-Constant Scheduler (证明硬跳变优于死锁 1.0):
-        use_boundary = True
-        use_dynamic_dilation = True
-        scheduler_type = 'piecewise' (开启 1.0 -> 0.5 -> 0.1 阶梯降权)
-        use_oracle_feedback = False
-
-    [5] + Topology-Aware Injection (Full HALO 最终绝杀版):
-        use_boundary = True
-        use_dynamic_dilation = True
-        scheduler_type = 'piecewise'
-        use_oracle_feedback = True   (开启跨分支先知反哺，将边界知识砸向 Context 分支)
-
-    [额外] Figure 8 灾难崩溃曲线 (反面教材):
-        scheduler_type = 'smooth'    (开启平滑衰减，复现 mIoU 断崖式暴跌)
+    【完美消融实验版 - 严格对齐官方 DDRNet Baseline】
+    1. Baseline: 仅保留 Context 和 Spatial 语义分支 (loss 为 0)
+    2. use_laplacian: 开启边界头，使用 Laplacian GT + BCE + Dice 联合监督
+    3. use_halo_feedback: 开启跨分支先知反哺 (Topology-Aware Injection)
     ===========================================================================
     """
 
@@ -64,13 +33,14 @@ class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
                  num_classes: int,
                  norm_cfg: OptConfigType = dict(type='BN'),
                  act_cfg: OptConfigType = dict(type='ReLU', inplace=True),
-                 max_iters: int = 120000,
-                 # --- 消融实验核心配置开关 ---
-                 use_boundary: bool = True,
-                 use_dynamic_dilation: bool = True,
-                 static_dilation_val: int = 3,       # <--- 关闭动态膨胀时的固定基准值
-                 scheduler_type: str = 'piecewise',  # 'constant', 'smooth', 'piecewise'
-                 use_oracle_feedback: bool = True,
+                 max_iters: int = 120000,  
+                 # =========================================================
+                 # 🔬 消融实验控制开关
+                 # =========================================================
+                 use_laplacian: bool = True,           # 开启: 拉普拉斯边界提取 + 联合 Dice 损失
+                 use_dynamic_dilation: bool = True,    # 开启: 动态形态学膨胀
+                 use_3stage_schedule: bool = True,     # 开启: 三阶段动态权重调度
+                 use_halo_feedback: bool = True,       # 开启: 跨分支先知反哺
                  **kwargs):
         super().__init__(
             in_channels,
@@ -86,19 +56,17 @@ class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
         
         self.max_iters = max_iters
         
-        # --- 记录消融标志位 ---
-        self.use_boundary = use_boundary
+        self.use_laplacian = use_laplacian
         self.use_dynamic_dilation = use_dynamic_dilation
-        self.static_dilation_val = static_dilation_val
-        self.scheduler_type = scheduler_type
-        self.use_oracle_feedback = use_oracle_feedback
+        self.use_3stage_schedule = use_3stage_schedule
+        self.use_halo_feedback = use_halo_feedback
         
         self.register_buffer('local_step', torch.tensor(0, dtype=torch.long))
         
-        # 仅在开启边界时初始化边界预测头和调度器，保证 Baseline 绝对干净
-        if self.use_boundary:
-            self.bd_cls_seg = nn.Conv2d(self.channels, 1, kernel_size=1)
-            self.dynamic_schedule = self._build_avg3_schedule(self.max_iters)
+        # 【HALO 新增】：独立的单通道边界预测头
+        self.bd_cls_seg = nn.Conv2d(self.channels, 1, kernel_size=1)
+
+        self.dynamic_schedule = self._build_avg3_schedule(self.max_iters)
 
     def init_weights(self):
         for m in self.modules():
@@ -123,19 +91,19 @@ class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
         if self.training:
             c3_feat, c5_feat = inputs
             
+            # Context 分支 (语义)
             x_c = self.head(c5_feat)
             x_c_logit = self.cls_seg(x_c)
             
+            # Spatial 分支 (语义)
             x_s = self.aux_head(c3_feat)
             x_s_logit = self.aux_cls_seg(x_s)
             
-            bd_logit = None
-            if self.use_boundary:
-                bd_logit = self.bd_cls_seg(x_s)
+            # Spatial 分支附带的边界提取器 (HALO 新增)
+            bd_logit = self.bd_cls_seg(x_s)
 
             return x_c_logit, x_s_logit, bd_logit
         else:
-            # 推理阶段：完全丢弃高分辨率分支和边界计算，0 FLOPs 增加！
             x_c = self.head(inputs)
             x_c = self.cls_seg(x_c)
             return x_c
@@ -164,67 +132,59 @@ class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
         return (boundary_map * valid_mask).squeeze(1)
 
     def _build_avg3_schedule(self, max_iters: int) -> dict:
-        t1 = int(max_iters / 3.0)
-        t2 = int(max_iters * 2.0 / 3.0)
+        t1 = int(max_iters / 3.0)      
+        t2 = int(max_iters * 2.0 / 3.0)  
 
         schedule = {
-            0:         {'dilation': 5, 'dice_w': 1.0},
-            t1:        {'dilation': 5, 'dice_w': 1.0},
-            t1 + 1:    {'dilation': 4, 'dice_w': 0.5},
-            t2:        {'dilation': 4, 'dice_w': 0.5},
-            t2 + 1:    {'dilation': 3, 'dice_w': 0.1},
-            max_iters: {'dilation': 3, 'dice_w': 0.1}
+            0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
+            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
         }
         return schedule
 
-    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float]:
+    def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
         schedule = self.dynamic_schedule
         milestones = sorted(schedule.keys())
         
-        # 1. 定位当前所处的阶段
-        start_step, end_step = milestones[0], milestones[-1]
-        for i in range(len(milestones) - 1):
-            if milestones[i] <= current_step <= milestones[i+1]:
-                start_step, end_step = milestones[i], milestones[i+1]
-                break
-                
-        start_cfg, end_cfg = schedule[start_step], schedule[end_step]
-        
-        # =====================================================================
-        # 2. 处理 Dilation (消融开关：动态 5->4->3 vs 固定 3)
-        # =====================================================================
-        if self.use_dynamic_dilation:
+        if current_step <= milestones[0]: 
+            cfg = schedule[milestones[0]]
+            cur_dilation, cur_dice_w, cur_fb_w = cfg['dilation'], cfg['dice_w'], cfg['fb_w']
+        elif current_step >= milestones[-1]: 
+            cfg = schedule[milestones[-1]]
+            cur_dilation, cur_dice_w, cur_fb_w = cfg['dilation'], cfg['dice_w'], cfg['fb_w']
+        else:
+            start_step, end_step = milestones[0], milestones[-1]
+            for i in range(len(milestones) - 1):
+                if milestones[i] <= current_step < milestones[i+1]:
+                    start_step, end_step = milestones[i], milestones[i+1]
+                    break
+                    
+            start_cfg, end_cfg = schedule[start_step], schedule[end_step]
+            progress = (current_step - start_step) / float(end_step - start_step)
+            
             cur_dilation = start_cfg['dilation']
-        else:
-            cur_dilation = self.static_dilation_val  # 默认使用固定宽度 3
-            
-        # =====================================================================
-        # 3. 处理 Weight Scheduler (消融开关：恒定 vs 平滑 vs 阶梯硬跳变)
-        # =====================================================================
-        if self.scheduler_type == 'constant':
-            cur_dice_w = 1.0  # 永远保持最强监督 1.0
-            
-        elif self.scheduler_type == 'piecewise':
-            cur_dice_w = start_cfg['dice_w']  # 阶梯硬跳变 1.0 -> 0.5 -> 0.1，锁定不插值
-            
-        elif self.scheduler_type == 'smooth':
-            # 平滑衰减 (Smooth Decay)：产生 Moving Target，导致灾难性崩溃
-            if end_step == start_step:
-                progress = 0.0
-            else:
-                progress = (current_step - start_step) / float(end_step - start_step)
             cur_dice_w = start_cfg['dice_w'] + progress * (end_cfg['dice_w'] - start_cfg['dice_w'])
+            cur_fb_w = start_cfg['fb_w'] + progress * (end_cfg['fb_w'] - start_cfg['fb_w'])
             
-        else:
-            raise ValueError(f"Unknown scheduler_type: {self.scheduler_type}")
+        if not self.use_dynamic_dilation:
+            cur_dilation = 3  
             
-        return cur_dilation, cur_dice_w
+        if not self.use_3stage_schedule:
+            cur_dice_w = 1.0  
+            cur_fb_w = 1.0    
+            
+        return cur_dilation, cur_dice_w, cur_fb_w
 
     def loss_by_feat(self, seg_logits: Tuple[Tensor], batch_data_samples: SampleList) -> dict:
         
         if self.training:
             self.local_step += 1
         current_step = self.local_step.item()
+        
+        cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
 
         loss = dict()
         context_logit, spatial_logit, bd_logit = seg_logits
@@ -232,53 +192,50 @@ class DDRHeadHALOAvg3OptAblation(BaseDecodeHead):
 
         context_logit = resize(context_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
         spatial_logit = resize(spatial_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
-        if bd_logit is not None:
-            bd_logit = resize(bd_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
+        bd_logit = resize(bd_logit, size=seg_label.shape[2:], mode='bilinear', align_corners=self.align_corners)
         
         seg_label = seg_label.squeeze(1)
 
-        # =====================================================================
-        # 步骤 1: 基础全局语义损失 (Baseline)
-        # =====================================================================
+        # 1. 官方原版 Baseline Loss (Context 语义 + Spatial 语义)
         loss['loss_context'] = self.loss_decode[0](context_logit, seg_label)
         loss['loss_spatial'] = self.loss_decode[1](spatial_logit, seg_label)
-        loss['acc_seg'] = accuracy(context_logit, seg_label, ignore_index=self.ignore_index)
-        
-        # 如果未开启边界辅助，直接返回 Baseline 的 loss (消融节点 1)
-        if not self.use_boundary:
-            return loss
-
-        # =====================================================================
-        # 步骤 2: 拉普拉斯边界提取与联合损失计算
-        # =====================================================================
-        cur_dilation, cur_dice_w = self._get_dynamic_params(current_step)
-
-        bd_label = self._generate_laplacian_boundary(
-            seg_label, num_classes=self.num_classes, ignore_index=self.ignore_index, dilation_size=cur_dilation
-        )
-
-        bce_loss = F.binary_cross_entropy_with_logits(bd_logit.squeeze(1), bd_label)
-        
-        pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
-        valid_mask = (seg_label != self.ignore_index).float()
-        intersection = (pred_sigmoid * bd_label * valid_mask).sum(dim=(1, 2))
-        union = (pred_sigmoid * valid_mask).sum(dim=(1, 2)) + (bd_label * valid_mask).sum(dim=(1, 2))
-        dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
-        
-        loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
         
         # =====================================================================
-        # 步骤 3: 跨分支先知反哺 (Topology-Aware Injection)
+        # 🔬 消融点 1：Laplacian Boundary Module (BCE + Dice)
         # =====================================================================
-        if self.use_oracle_feedback:
-            # 提取 Spatial 分支 (先知) 预测的边界掩码
-            bd_pred_mask = (pred_sigmoid > 0.5)
+        if self.use_laplacian:
+            # 开启时：计算真实的边界 Loss
+            bd_label = self._generate_laplacian_boundary(
+                seg_label, num_classes=self.num_classes, ignore_index=self.ignore_index, dilation_size=cur_dilation
+            )
+            bce_loss = F.binary_cross_entropy_with_logits(bd_logit.squeeze(1), bd_label)
             
-            # 制作“纯边界语义标签”：只保留先知认为是边界的地方，其余忽略
+            pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
+            valid_mask = (seg_label != self.ignore_index).float()
+            intersection = (pred_sigmoid * bd_label * valid_mask).sum(dim=(1, 2))
+            union = (pred_sigmoid * valid_mask).sum(dim=(1, 2)) + (bd_label * valid_mask).sum(dim=(1, 2))
+            dice_loss = (1.0 - (2.0 * intersection + 1e-5) / (union + 1e-5)).mean()
+            
+            loss['loss_bd_laplacian'] = bce_loss + cur_dice_w * dice_loss
+        else:
+            # 关闭时：退化为 0 (乘以 0.0 防止 DDP 报错，完美等价于原版 Baseline)
+            loss['loss_bd_laplacian'] = 0.0 * bd_logit.sum()
+        
+        # =====================================================================
+        # 🔬 消融点 4：Topology-Aware Injection (Cross-Branch Oracle Feedback)
+        # =====================================================================
+        if self.use_halo_feedback:
+            # 只有在开启反哺时，才计算并砸向 Context 分支
+            pred_sigmoid = torch.sigmoid(bd_logit[:, 0, :, :])
+            bd_pred_mask = (pred_sigmoid > 0.5)
             filler = torch.ones_like(seg_label) * self.ignore_index
             halo_label = torch.where(bd_pred_mask, seg_label, filler)
             
-            # 将严苛的边界标签作为强监督信号砸向 Context 分支！
-            loss['loss_halo_feedback'] = self.loss_decode[0](context_logit, halo_label) * cur_dice_w
+            loss['loss_halo_feedback'] = self.loss_decode[0](context_logit, halo_label) * cur_fb_w
+        else:
+            # 关闭时：退化为 0
+            loss['loss_halo_feedback'] = 0.0 * context_logit.sum()
+            
+        loss['acc_seg'] = accuracy(context_logit, seg_label, ignore_index=self.ignore_index)
 
         return loss
