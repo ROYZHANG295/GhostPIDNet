@@ -178,13 +178,21 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         t2 = int(max_iters * 2.0 / 3.0)
 
         # 【解耦化】：dice_w 采用 3.0->1.0->0.5，fb_w 恒定 1.0 保护主干
+        # schedule = {
+        #     0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
+        #     t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
+        #     t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1}
+        # }
         schedule = {
             0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
             t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
-            t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
-            t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 0.5},
-            t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1},
-            max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1}
+            t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
+            t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
+            t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0},
+            max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0}
         }
         return schedule
 

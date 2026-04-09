@@ -1,0 +1,1 @@
+{"lr": 0.00016339763254418133, "data_time": 0.186362886428833, "loss": 9.840050792694091, "decode.loss_sem_p": 1.7474447727203368, "decode.loss_sem_i": 2.6842214107513427, "decode.loss_bd_laplacian": 2.7924328565597536, "decode.loss_halo_feedback": 2.6159516334533692, "decode.acc_seg": 42.015560150146484, "time": 0.6436997652053833, "iter": 50, "memory": 18623, "step": 50}
