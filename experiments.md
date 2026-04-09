@@ -65,3 +65,10 @@
   - mIou=77.34
   - experiments/9-1-ddrnet_23-slim_in1k-pre-halo_2xb6-120k_cityscapes-1024x1024-A4000-77.34
 
+# 0407:
+#### 目的：1xb12 DDRNet baseline
+python tools/train.py configs/halo_3090/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024.py --work-dir=
+./ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024
+
+#### 目的：1xb12 DDRNet Smooth
+configs/halo_3090/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024.py

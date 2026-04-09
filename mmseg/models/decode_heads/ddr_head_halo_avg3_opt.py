@@ -156,6 +156,23 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         t1 = int(max_iters / 3.0)      # 三等分点 1 (33.3%)
         t2 = int(max_iters * 2.0 / 3.0)  # 三等分点 2 (66.7%)
 
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+        #     # 阶段3：极速冲刺期 (语义解放)
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
+        # }
+
+        # fb_w=1.0 恒定1.0，追求大一统
+        # 版本二，xx_fb_w_1
         schedule = {
             # 阶段1：强先验期
             # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
@@ -163,12 +180,12 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
             t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
             
             # 阶段2：平滑衰减期
-            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
-            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
             
             # 阶段3：极速冲刺期 (语义解放)
-            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
-            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
+            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0},
+            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0}
         }
 
         return schedule

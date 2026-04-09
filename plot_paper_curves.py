@@ -50,6 +50,12 @@ LOG_CONFIG = {
     # # "DDRNet 1xb6 acc2 dynamic5": "ddrnet_workdir/halo-13-2-ddrnet_23-slim_in1k-pre-halo_avg3_2xb6-120k_cityscapes-1024x1024-accumulative2/20260406_191956/vis_data/scalars.json",
     # #"DDRNet 1xb6 acc2 dynamic5 opt": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_2xb6-120k_cityscapes-1024x1024-accumulative2/20260407_114529/vis_data/scalars.json",
     # "DDRNet 1xb6 acc2 dynamic5 opt2": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_2xb6-120k_cityscapes-1024x1024-accumulative2/20260407_135536/vis_data/scalars.json",
+    
+    # DDRNet 1xb12
+    "DDRNet 1xb12 baseline": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024/20260407_230051/vis_data/scalars.json",
+    #"DDRNet 1xb12 smooth": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024/20260407_214854/vis_data/scalars.json",
+    "DDRNet 1xb12 avg3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024/20260409_001921/vis_data/scalars.json",
+
     # BiSeNetV2 
     # "BiSeNetV2 Baseline": "work_dirs/10-bisenetv2_fcn_baseline-1xb6-120k_cityscapes-1024x1024/20260331_230655/vis_data/scalars.json",
     # "BiSeNetV2 HALO": "work_dirs/11-bisenetv2_halo-1xb6-120k_cityscapes-1024x1024/20260401_211214/vis_data/scalars.json",
