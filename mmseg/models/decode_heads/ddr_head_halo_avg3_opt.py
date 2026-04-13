@@ -155,7 +155,150 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         """根据总训练步数，自动计算三阶段平均分割点，完美解耦内部监督与外部反哺！"""
         t1 = int(max_iters / 3.0)      # 三等分点 1 (33.3%)
         t2 = int(max_iters * 2.0 / 3.0)  # 三等分点 2 (66.7%)
+        
+        # 成功 77.95
+        schedule = {
+            # 阶段1：强先验期
+            # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+            0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+            # 阶段2：平滑衰减期
+            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+            # 阶段3：极速冲刺期 (语义解放)
+            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
+            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
+        }
 
+        # fb_w=1.0 恒定1.0，追求大一统 
+        # 失败：77.66
+        # 版本二，xx_fb_w_1
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+            
+        #     # 阶段3：极速冲刺期 (语义解放)
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0}
+        # }
+
+        # 版本三，发现版本二最后40k不如版本1，推测仍然是dice_w的问题，所以讲dice_w提高到0.3
+        # 失败：77.23
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+            
+        #     # 重点在这里！阶段3不再降到0.1，而是保持 0.5 的反哺，内部稍微降一点到 0.3
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 0.5},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 0.5}
+        # }
+
+        # 版本四，发现版本二最后40k不如版本1，推测仍然是dice_w的问题，所以讲dice_w提高到0.3， fb_w仍然=1.0
+        # 失败：77.38
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
+            
+        #     # 重点在这里！阶段3不再降到0.1，而是保持 0.5 的反哺，内部稍微降一点到 0.3
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 1.0},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 1.0}
+        # }
+
+        # 版本五 在版本1基础上小改
+        # 77.84
+        # ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-dilation-4
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+        #     # 阶段3：极速冲刺期 (语义解放) - 不要降到 3！让 DDRNet 停留在 Dilation=4。略粗一点的边界对轻量级网络更友好，梯度更平滑。
+        #     t2 + 1: {'dilation': 4, 'dice_w': 0.1, 'fb_w': 0.1},
+        #     max_iters: {'dilation': 4, 'dice_w': 0.1, 'fb_w': 0.1}
+        # }
+
+        # 版本六 在版本1基础上修改fb_w=0.3
+        # 77.67
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+        #     # 阶段3：极速冲刺期 (语义解放)
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.3},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.3}
+        # }
+
+        # 版本7，看80k左右的趋势，仍然压着baseline走，所以直接用40k-80k的参数
+        # 77.63
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+        #     # 阶段3：极速冲刺期 (语义解放)
+        #     # t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.3},
+        #     # max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.3}
+        #     t2 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     max_iters: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5}
+        # }
+
+        # 版本8 在版本1基础上修改fb_w=0.3 dice_w=0.3
+        # 77.65
+        # schedule = {
+        #     # 阶段1：强先验期
+        #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
+        #     0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+            
+        #     # 阶段2：平滑衰减期
+        #     t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+            
+        #     # 阶段3：极速冲刺期 (语义解放)
+        #     t2 + 1: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 0.3},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.3, 'fb_w': 0.3}
+        # }
+
+        # 版本9: 提取 Spatial 分支 (先知) 预测的边界掩码 bd_pred_mask = (pred_sigmoid > 0.8)
+        # 版本9 bd_pred_mask = (pred_sigmoid > 0.8) 之前是0.5
+        # ddr_head_halo_avg3_opt_mask08.py
+        # 77.53
         # schedule = {
         #     # 阶段1：强先验期
         #     # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
@@ -171,22 +314,22 @@ class DDRHeadHALOAvg3Opt(BaseDecodeHead):
         #     max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
         # }
 
-        # fb_w=1.0 恒定1.0，追求大一统
-        # 版本二，xx_fb_w_1
-        schedule = {
-            # 阶段1：强先验期
-            # dice_w 控制内部边界学习，fb_w 控制外部反哺力度
-            0:      {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
-            t1:     {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
-            
-            # 阶段2：平滑衰减期
-            t1 + 1: {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
-            t2:     {'dilation': 4, 'dice_w': 0.5, 'fb_w': 1.0},
-            
-            # 阶段3：极速冲刺期 (语义解放)
-            t2 + 1: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0},
-            max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 1.0}
-        }
+        # 版本10 开始动手stage2 
+        # 提前解放版：压缩 Stage 1 和 Stage 2 的时间
+        # t1 = 30000  # 原来可能是 40000
+        # t2 = 60000  # 原来可能是 80000
+        # # 77.51
+        # schedule = {
+        #     0:         {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1:        {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t1 + 1:    {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     t2:        {'dilation': 4, 'dice_w': 0.5, 'fb_w': 0.5},
+        #     # 从 60k 到 120k，整整一半的时间都在进行 Semantic Liberation！
+        #     t2 + 1:    {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.1, 'fb_w': 0.1}
+        # }
+
+        print(schedule)
 
         return schedule
 
