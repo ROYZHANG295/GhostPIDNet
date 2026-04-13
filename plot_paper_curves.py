@@ -65,15 +65,16 @@ LOG_CONFIG = {
 # "PIDNet Opt3 1xb6": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb6-120k_1024x1024-cityscapes/20260404_173334/vis_data/scalars.json",
 # "": "",    
     # PIDNet 1xb12
-    "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+    # "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
     # "PIDNet Opt3 1xb6": "work_dirs/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260322_231459-78.65/vis_data/scalars.json",
     # "PIDNet Opt3 1xb12": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb12-120k_1024x1024-cityscapes/20260404_173653/vis_data/scalars.json",
     # "PIDNet Dynamic5 1xb12": "work_dirs/halo-9-halo-ablation-smooth-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260405_214147/vis_data/scalars.json",
-    # "PIDNet Halo ref ddr 1xb12": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL/20260408_174811/vis_data/scalars.json",
-    #"PIDNet Halo 1xb12 fb_w=1.0": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1/20260409_112733/vis_data/scalars.json",
+    "PIDNet Halo ref ddr 1xb12": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL/20260408_174811/vis_data/scalars.json",
+    # "PIDNet Halo 1xb12 fb_w=1.0": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1/20260409_112733/vis_data/scalars.json",
     "PIDNet Halo 1xb12 fb_w=1 dice_w=1.5-1.0 79.08": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10/20260410_133627/vis_data/scalars.json",
     # 消融实验，动态膨胀5-4-3，dice_w固定3.0，fb_w固定1.0，证明 动态膨胀有效果
-    "PIDNet Halo Ablation 78.78": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-dilation543-dice3-fb1-v4/20260411_061003/vis_data/scalars.json",
+    # "PIDNet Halo Ablation 78.78": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-dilation543-dice3-fb1-v4/20260411_061003/vis_data/scalars.json",
+    "PIDNet Halo 79.09 best run2": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-best-run2/20260412_002146/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
