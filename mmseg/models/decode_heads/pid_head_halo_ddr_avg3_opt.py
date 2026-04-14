@@ -177,7 +177,7 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         t1 = int(max_iters / 3.0)
         t2 = int(max_iters * 2.0 / 3.0)
 
-        # 【解耦化】：dice_w 采用 3.0->1.0->0.5，fb_w 恒定 1.0 保护主干
+        # 版本1【解耦化】：dice_w 采用 3.0->1.0->0.5，fb_w 恒定 1.0 保护主干
         # schedule = {
         #     0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
         #     t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
@@ -186,14 +186,41 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         #     t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1},
         #     max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 0.1}
         # }
+
+        # 版本2 跑出了 78.61,但是后劲不足
+        # schedule = {
+        #     0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
+        #     t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0},
+        #     max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0}
+        # }
+
+        # 版本3 虽然上一个版本跑出 78.61，但是明显后劲不足
+        # 策略：减缓 Dice Loss 的衰减，全程保持较高的边界约束
+        # pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10
+        # pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-best-run2
+        # 成功跑出 79.08的高分
         schedule = {
             0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
             t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
-            t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
-            t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
-            t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0},
-            max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0}
+            t1 + 1:    {'dilation': 4, 'dice_w': 1.5, 'fb_w': 1.0},  # 从 1.0 提高到 1.5
+            t2:        {'dilation': 4, 'dice_w': 1.5, 'fb_w': 1.0},
+            t2 + 1:    {'dilation': 3, 'dice_w': 1.0, 'fb_w': 1.0},  # 尾段保底 1.0，而不是 0.5
+            max_iters: {'dilation': 3, 'dice_w': 1.0, 'fb_w': 1.0}
         }
+
+        # 版本4 消融实验，动态膨胀5-4-3，dice_w固定3.0，fb_w固定1.0，证明 动态膨胀有效果
+        # pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-dilation543-dice3-fb1-v4
+        # schedule = {
+        #     0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t1 + 1:    {'dilation': 4, 'dice_w': 3.0, 'fb_w': 1.0}, 
+        #     t2:        {'dilation': 4, 'dice_w': 3.0, 'fb_w': 1.0},
+        #     t2 + 1:    {'dilation': 3, 'dice_w': 3.0, 'fb_w': 1.0},  
+        #     max_iters: {'dilation': 3, 'dice_w': 3.0, 'fb_w': 1.0}
+        # }
         return schedule
 
     def _get_dynamic_params(self, current_step: int) -> Tuple[int, float, float]:
@@ -218,6 +245,9 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         
         # 接收解耦后的三个参数
         cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
+
+        if current_step % 50 == 0:
+            print('cur_dilation=' + str(cur_dilation) + ',cur_dice_w=' + str(cur_dice_w) + ', cur_fb_w=' + str(cur_fb_w))
 
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits

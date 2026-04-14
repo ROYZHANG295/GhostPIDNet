@@ -85,9 +85,13 @@ LOG_CONFIG = {
 # # # "Dynamic3 no pretrained": "experiments/test-0323-2-120k-pidnet-s-no-pretrained_laplacian_loss_opt3_dynamic3_warmup-2xb6-120k_1024x1024-cityscapes-A4000-77.20/20260323_080513/vis_data/scalars.json",
 # "PIDNet dynamic5 no pretrained": "work_dirs/halo-10-no-pretrained-laplacian-loss-dynamic5-smooth-120k-pidnet-s_1xb6-120k_1024x1024-cityscapes/20260403_221118/vis_data/scalars.json",
 
-"PIDNet no pretrained 1xb12 baseline": "work_dirs/halo-pidnet-s-no-pretrained_baseline_warmup-1xb12-120k_1024x1024-cityscapes/20260407_044708/vis_data/scalars.json",
-"PIDNet no pretrained 1xb12 dynamic5 smooth": "work_dirs/halo-dynamic5-smooth-pidnet-s_warmup-1xb12-120k_1024x1024-cityscapes/20260408_095120/vis_data/scalars.json",
+# "PIDNet no pretrained 1xb12 baseline": "work_dirs/halo-pidnet-s-no-pretrained_baseline_warmup-1xb12-120k_1024x1024-cityscapes/20260407_044708/vis_data/scalars.json",
+# "PIDNet no pretrained 1xb12 dynamic5 smooth": "work_dirs/halo-dynamic5-smooth-pidnet-s_warmup-1xb12-120k_1024x1024-cityscapes/20260408_095120/vis_data/scalars.json",
 
+# PIDNet 1xb12
+"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+# "PIDNet 1xb12 olb-fb 78.76 dilation3-dice30-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-use_olb_and_fb/20260410_114003/vis_data/scalars.json",
+"PIDNet 1xb12 olb-fb dilation3-dice05-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice05-fb10-use_olb_and_fb-/20260411_202154/vis_data/scalars.json",
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
