@@ -177,13 +177,12 @@ class PIDHeadHALOSameDDRAvg3OptAblation(BaseDecodeHead):
             return {
                 0:         {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
                 t1:        {'dilation': 5, 'dice_w': 3.0, 'fb_w': 1.0},
-                t1 + 1:    {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
-                t2:        {'dilation': 4, 'dice_w': 1.0, 'fb_w': 1.0},
-                t2 + 1:    {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0},
-                max_iters: {'dilation': 3, 'dice_w': 0.5, 'fb_w': 1.0}
+                t1 + 1:    {'dilation': 4, 'dice_w': 1.5, 'fb_w': 1.0},  # 从 1.0 提高到 1.5
+                t2:        {'dilation': 4, 'dice_w': 1.5, 'fb_w': 1.0},
+                t2 + 1:    {'dilation': 3, 'dice_w': 1.0, 'fb_w': 1.0},  # 尾段保底 1.0，而不是 0.5
+                max_iters: {'dilation': 3, 'dice_w': 1.0, 'fb_w': 1.0}
             }
         else:
-            # [AAS 关闭] 传统固定调度：所有权重均为 1.0
             return {
                 0:         {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
                 t1:        {'dilation': 5, 'dice_w': 1.0, 'fb_w': 1.0},
@@ -216,7 +215,11 @@ class PIDHeadHALOSameDDRAvg3OptAblation(BaseDecodeHead):
             self.local_step += 1
         current_step = self.local_step.item()
         
+        
         cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
+
+        if current_step % 50 == 0:
+            print('cur_dilation=' + str(cur_dilation) + ',cur_dice_w=' + str(cur_dice_w) + ', cur_fb_w=' + str(cur_fb_w))
 
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits

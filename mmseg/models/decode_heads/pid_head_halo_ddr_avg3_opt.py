@@ -246,6 +246,9 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         # 接收解耦后的三个参数
         cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
 
+        if current_step % 50 == 0:
+            print('cur_dilation=' + str(cur_dilation) + ',cur_dice_w=' + str(cur_dice_w) + ', cur_fb_w=' + str(cur_fb_w))
+
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits
         sem_label = self._stack_batch_gt(batch_data_samples)
