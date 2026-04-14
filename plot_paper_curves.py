@@ -52,9 +52,26 @@ LOG_CONFIG = {
     # "DDRNet 1xb6 acc2 dynamic5 opt2": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_2xb6-120k_cityscapes-1024x1024-accumulative2/20260407_135536/vis_data/scalars.json",
     
     # DDRNet 1xb12
+
+    "DDRNet 1xb12 baseline": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024/20260407_230051/vis_data/scalars.json",
+    #"DDRNet 1xb12 smooth": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024/20260407_214854/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024/20260409_001921/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 fb_w=1": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024_fb_w/20260409_165314/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 fb_w=0.5": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024_fb_w05/20260410_111008/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 fb_w=1 dice_w=0.3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024_fb_w10_dice_w03/20260410_123841/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 dilation=4": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-dilation-4/20260410_192158/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 fb_w=0.3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-fb_w03_v6/20260410_235042/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 stage2=3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-dilation-4-dice05-fb05_v7/20260411_053545/vis_data/scalars.json",
+    #"DDRNet 1xb12 avg3 dilation-3-dice03-fb03_v8": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-dilation-3-dice03-fb03_v8/20260411_070306/vis_data/scalars.json",
+    # "DDRNet 1xb12 avg3 mask0.8": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-avg3-mask08-v9/20260411_154347/vis_data/scalars.json",
+    # "DDRNet 1xb12 baseline run2": "ddrnet_workdir/configs/halo_3090/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024-2/20260411_160711/vis_data/scalars.json",
+    "DDRNet 1xb12 30k 60k 120k v10": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-30k-60k-120k-v10/20260412_090705/vis_data/scalars.json",
+    # "DDRNet 1xb12 baseline last 40k": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024-3-last40konly/20260412_101811/vis_data/scalars.json",
+
     # "DDRNet 1xb12 baseline": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-baseline_1xb12-120k_cityscapes-1024x1024/20260407_230051/vis_data/scalars.json",
     # #"DDRNet 1xb12 smooth": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt-smooth_1xb12-120k_cityscapes-1024x1024/20260407_214854/vis_data/scalars.json",
     # "DDRNet 1xb12 avg3": "ddrnet_workdir/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024/20260409_001921/vis_data/scalars.json",
+
 
     # BiSeNetV2 
     # "BiSeNetV2 Baseline": "work_dirs/10-bisenetv2_fcn_baseline-1xb6-120k_cityscapes-1024x1024/20260331_230655/vis_data/scalars.json",
@@ -65,6 +82,12 @@ LOG_CONFIG = {
 # "PIDNet Opt3 1xb6": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb6-120k_1024x1024-cityscapes/20260404_173334/vis_data/scalars.json",
 # "": "",    
     # PIDNet 1xb12
+
+    # "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+    # # # "PIDNet Opt3 1xb12": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb12-120k_1024x1024-cityscapes/20260404_173653/vis_data/scalars.json",
+    # # "PIDNet Dynamic5 1xb12": "work_dirs/halo-9-halo-ablation-smooth-120k-pidnet-s_1xb12-120k_1024x1024-cityscapes/20260405_214147/vis_data/scalars.json",
+    # "PIDNet Halo ref ddr 1xb12": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL/20260408_174811/vis_data/scalars.json",
+
     "PIDNet Baseline 78.20 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
     # "PIDNet Opt3 1xb6": "work_dirs/test-0322-2-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-2xb6-120k_1024x1024-cityscapes/20260322_231459-78.65/vis_data/scalars.json",
     # "PIDNet Opt3 1xb12": "work_dirs/halo-12-1-120k-pidnet-s-with-pretrained_laplacian_loss_opt3_warmup-1xb12-120k_1024x1024-cityscapes/20260404_173653/vis_data/scalars.json",
@@ -76,11 +99,12 @@ LOG_CONFIG = {
     # "PIDNet Halo Ablation 78.78": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-dilation543-dice3-fb1-v4/20260411_061003/vis_data/scalars.json",
     "PIDNet Halo 1xb12 fb_w=1 dice_w=1.5-1.0 79.08 with first40k": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10/20260410_133627/vis_data/scalars-add-first40k.json",
     #"PIDNet Halo 79.09 best run2": "pidnet_workdir/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-best-run2/20260412_002146/vis_data/scalars.json",
+
 }
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
-COLORS = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b']
-MARKERS = ['o', 'o', 'o', '^', 's',  'D', 'v', 'p']
+COLORS = ['#1f77b4', '#d62728', '#ff7f0e', '#2ca02c', '#9467bd', '#8c564b']
+MARKERS = ['o', 'o', 'o', 'o', '^', 's',  'D', 'v', 'p']
 # ========================================================================
 
 def load_log_data(file_path):
