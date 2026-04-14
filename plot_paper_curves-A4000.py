@@ -89,10 +89,17 @@ LOG_CONFIG = {
 # "PIDNet no pretrained 1xb12 dynamic5 smooth": "work_dirs/halo-dynamic5-smooth-pidnet-s_warmup-1xb12-120k_1024x1024-cityscapes/20260408_095120/vis_data/scalars.json",
 
 # PIDNet 1xb12
-"PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
-# "PIDNet 1xb12 olb-fb 78.76 dilation3-dice30-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-use_olb_and_fb/20260410_114003/vis_data/scalars.json",
-"PIDNet 1xb12 olb-fb dilation3-dice05-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice05-fb10-use_olb_and_fb-/20260411_202154/vis_data/scalars.json",
+# "PIDNet Baseline 78.2 b12": "experiments/test-0324-1-120k-b12-1GPU-pidnet-s-cityspace-baseline-3090-78.20/20260324_000733/vis_data/scalars.json",
+# # "PIDNet 1xb12 olb-fb 78.76 dilation3-dice30-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-use_olb_and_fb/20260410_114003/vis_data/scalars.json",
+# "PIDNet 1xb12 olb-fb dilation3-dice05-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice05-fb10-use_olb_and_fb-/20260411_202154/vis_data/scalars.json",
+# "PIDNet 1xb12 dilation3-dice10-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice10-fb10-use_olb_and_fb/20260413_013500/vis_data/scalars.json",
+
+# Figure 4：Optimization stability / training dynamics
+# "PIDNet Baseline 1xb12 78.43": "experiments/test-0325-2-pidnet-s_1xb12-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.43/20260325_050247/vis_data/scalars.json",
+# "PIDNet HALO 1xb12 79.08": "experiments/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-3090-79.08/20260410_133627/vis_data/scalars-add-first40k.json",
+"DDRNet HALO 1xb12 77.95": "experiments/halo-ddrnet_23-slim_in1k-pre-halo_avg3-opt_1xb12-120k_cityscapes-1024x1024-3090-77.95/20260409_001921/vis_data/scalars.json",
 }
+
 
 # 论文常用高级配色 (蓝, 红, 绿, 橙, 紫, 棕) 和 不同的点标记
 COLORS = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b']
