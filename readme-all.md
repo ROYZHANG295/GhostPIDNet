@@ -499,3 +499,7 @@ git clone https://github.com/alexgkendall/SegNet-Tutorial.git data/SegNet-Tutori
 
 第二步：运行自定义的转换脚本 
 convert_camvid.py
+
+
+# github 加速
+source /etc/network_turbo
