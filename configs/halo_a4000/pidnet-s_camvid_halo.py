@@ -7,6 +7,8 @@ dataset_type = 'BaseSegDataset'
 data_root = 'data/camvid/'
 crop_size = (720, 960)
 
+iters = 6200
+
 # ⚠️ 核心修复：直接在这里定义 CamVid 的类别和颜色，不需要去底层注册！
 metainfo = dict(
     classes=('Sky', 'Building', 'Pole', 'Road', 'Pavement', 
@@ -49,6 +51,7 @@ model = dict(
         in_channels=128,
         channels=128,
         num_classes=11,
+        max_iters=iters,  # 🚀 【极其关键】必须把配置里的总步数传给你的调度器！
         norm_cfg=norm_cfg,
         act_cfg=dict(type='ReLU', inplace=True),
         align_corners=True,
@@ -62,7 +65,8 @@ model = dict(
                 thres=0.9,
                 min_kept=131072,
                 loss_weight=1.0),
-            dict(type='BoundaryLoss', loss_weight=20.0),
+            # dict(type='BoundaryLoss', loss_weight=20.0),
+            dict(type='BoundaryLoss', loss_weight=1.0),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
@@ -99,7 +103,7 @@ test_pipeline = [
 # ================= 4. Dataloader 设置 =================
 # ================= 4. Dataloader 设置 =================
 train_dataloader = dict(
-    batch_size=6,
+    batch_size=12,
     num_workers=4,
     persistent_workers=True,
     sampler=dict(type='InfiniteSampler', shuffle=True),
@@ -145,9 +149,9 @@ val_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU'])
 test_evaluator = val_evaluator
 
 # ================= 5. 训练策略 =================
-iters = 40000
 
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+
+optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0005)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer, clip_grad=None)
 
 param_scheduler = [
@@ -161,7 +165,7 @@ param_scheduler = [
 ]
 
 train_cfg = dict(
-    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 40)
+    type='IterBasedTrainLoop', max_iters=iters, val_interval=iters // 10)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
@@ -170,7 +174,7 @@ default_hooks = dict(
     logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
     param_scheduler=dict(type='ParamSchedulerHook'),
     checkpoint=dict(
-        type='CheckpointHook', by_epoch=False, interval=iters // 40, save_best='mIoU'),
+        type='CheckpointHook', by_epoch=False, interval=iters // 10, save_best='mIoU'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     visualization=dict(type='SegVisualizationHook'))
 
