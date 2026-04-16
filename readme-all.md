@@ -490,3 +490,12 @@ trtexec --loadEngine=spaceOptiConv_pidnet.trt --avgRuns=100 --duration=10 --useC
     --useCudaGraph    
 
 Gemini:royzhang295@gmail.com Bbpp1234567890$
+
+# 第一步：下载原始的 CamVid 数据集
+# 创建 data 文件夹（如果还没有的话）
+mkdir -p data
+# 克隆包含 CamVid 数据集的仓库
+git clone https://github.com/alexgkendall/SegNet-Tutorial.git data/SegNet-Tutorial
+
+第二步：运行自定义的转换脚本 
+convert_camvid.py
