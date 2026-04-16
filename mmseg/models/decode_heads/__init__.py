@@ -56,6 +56,7 @@ from .pid_head_halo_ddr_avg3_opt import PIDHeadHALOSameDDRAvg3Opt
 from .ddr_head_halo_avg3_opt_ablation import DDRHeadHALOAvg3OptAblation
 from .ddr_head_halo_avg3_opt_mask08 import DDRHeadHALOAvg3OptMask08
 from .pid_head_halo_ddr_avg3_opt_ablation import PIDHeadHALOSameDDRAvg3OptAblation
+from .pid_head_halo_ddr_avg3_opt_dia5_d321_fb1 import PIDHeadHALOSameDDRAvg3OptDia5D321Fb1
 
 
 __all__ = [
@@ -70,5 +71,6 @@ __all__ = [
     'PIDHeadLaplacian', 'PIDHeadLaplacianOpt3', 'PIDHeadLaplacianOpt3Dynamic', 'PIDHeadLaplacianOpt3Dynamic2', 'PIDHeadLaplacianOpt3Dynamic3',
     'PIDHeadLaplacianOpt3Dynamic4Smooth', 'PIDHeadLaplacianOpt3Dynamic5Smooth', 'DDRHeadLaplacianDynamic', 'BiSeNetHALOHead', 'DDRHeadHALO', 'PIDHeadHALO',
     'PIDHeadLaplacianOpt3Dynamic5SmoothHALO', 'PIDHeadHALOAblation', 'DDRHeadHALOAvg3', 'PIDHeadLaplacianOpt3Dynamic6SmoothSRA', 
-    'DDRHeadHALOAvg3Opt', 'DDRHeadHALOAvg3OptSmooth', 'PIDHeadHALOSameDDRAvg3Opt', 'DDRHeadHALOAvg3OptAblation', 'DDRHeadHALOAvg3OptMask08', 'PIDHeadHALOSameDDRAvg3OptAblation'
+    'DDRHeadHALOAvg3Opt', 'DDRHeadHALOAvg3OptSmooth', 'PIDHeadHALOSameDDRAvg3Opt', 'DDRHeadHALOAvg3OptAblation', 'DDRHeadHALOAvg3OptMask08', 'PIDHeadHALOSameDDRAvg3OptAblation',
+    'PIDHeadHALOSameDDRAvg3OptDia5D321Fb1'
 ]

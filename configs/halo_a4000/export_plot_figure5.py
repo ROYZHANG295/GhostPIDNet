@@ -17,19 +17,37 @@ SAMPLES = [
     {
         'img': 'munster_000000_000019_leftImg8bit.png',
         'gt':  'munster_000000_000019_gtFine_color.png',
-        'pid_base': 'pid_base/munster_000000_000019.png',
-        'pid_halo': 'pid_halo/munster_000000_000019.png',
-        'ddr_base': 'ddr_base/munster_000000_000019.png',
-        'ddr_halo': 'ddr_halo/munster_000000_000019.png',
+        'pid_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'pid_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'ddr_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'ddr_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
         'zoom_box': (800, 300, 1000, 500)  # 示例：框出右上角的红绿灯或电线杆
     },
     {
-        'img': 'frankfurt_000001_013016_leftImg8bit.png',
-        'gt':  'frankfurt_000001_013016_gtFine_color.png',
-        'pid_base': 'pid_base/frankfurt_000001_013016.png',
-        'pid_halo': 'pid_halo/frankfurt_000001_013016.png',
-        'ddr_base': 'ddr_base/frankfurt_000001_013016.png',
-        'ddr_halo': 'ddr_halo/frankfurt_000001_013016.png',
+        'img': 'munster_000000_000019_leftImg8bit.png',
+        'gt':  'munster_000000_000019_gtFine_color.png',
+        'pid_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'pid_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'ddr_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'ddr_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'zoom_box': (400, 400, 600, 600)  # 示例：框出中间的行人/自行车
+    },
+    {
+        'img': 'munster_000000_000019_leftImg8bit.png',
+        'gt':  'munster_000000_000019_gtFine_color.png',
+        'pid_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'pid_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'ddr_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'ddr_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'zoom_box': (400, 400, 600, 600)  # 示例：框出中间的行人/自行车
+    },
+    {
+        'img': 'munster_000000_000019_leftImg8bit.png',
+        'gt':  'munster_000000_000019_gtFine_color.png',
+        'pid_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'pid_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
+        'ddr_base': 'pid_base/munster_000000_000019_leftImg8bit.png',
+        'ddr_halo': 'pid_halo/munster_000000_000019_leftImg8bit.png',
         'zoom_box': (400, 400, 600, 600)  # 示例：框出中间的行人/自行车
     }
 ]
@@ -114,7 +132,12 @@ for row, sample in enumerate(SAMPLES):
         
         # 处理图片（加红框和画中画）
         processed_img = add_zoom_inset(img_path, box, zoom_ratio=2.0)
-        processed_img = processed_img.resize((TARGET_W, TARGET_H), Image.ANTIALIAS)
+        # 如果你的 Pillow 版本 >= 9.1.0，推荐使用这个：
+        processed_img = processed_img.resize((TARGET_W, TARGET_H), Image.Resampling.LANCZOS)
+
+        # 或者为了兼容老代码，也可以直接写：
+        # processed_img = processed_img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
+
         
         # 计算粘贴坐标
         paste_x = col * (TARGET_W + margin_between)

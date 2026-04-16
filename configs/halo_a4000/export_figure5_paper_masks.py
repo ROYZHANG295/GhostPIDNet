@@ -82,8 +82,14 @@ if __name__ == '__main__':
     main()
 
 
-# python configs/halo_a4000/export_paper_masks.py \
+# python configs/halo_a4000/export_figure5_paper_masks.py \
 #     configs/halo_3090/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes.py \
 #     experiments/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-3090-79.08/best_mIoU_iter_118000.pth \
 #     --img-dir data/cityscapes/leftImg8bit/val/munster \
 #     --out-dir work_dirs/paper_masks_halo_pidnet_best
+
+# python configs/halo_a4000/export_figure5_paper_masks.py \
+#      configs/space3net/test-0325-2-pidnet-s_2xb12-120k_1024x1024-cityscapes-runable-weight-class.py \
+#      experiments/test-0325-2-pidnet-s_1xb12-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.43/best_mIoU_iter_117000.pth \
+#      --img-dir data/cityscapes/leftImg8bit/val/munster \
+#      --out-dir work_dirs/paper_masks_halo_pidnet_baseline
