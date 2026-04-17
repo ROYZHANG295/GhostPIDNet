@@ -13,6 +13,7 @@ from mmseg.models.losses import accuracy
 from mmseg.models.utils import resize
 from mmseg.registry import MODELS
 from mmseg.utils import OptConfigType, SampleList
+from mmengine.logging import MMLogger
 
 
 class BasePIDHead(BaseModule):
@@ -101,6 +102,8 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
 
         # 【统一化】：采用解耦后的三阶段均分调度表
         self.dynamic_schedule = self._build_avg3_schedule(self.max_iters)
+        # 获取当前的全局 logger
+        self.logger = MMLogger.get_current_instance()
 
     def init_weights(self):
         for m in self.modules():
@@ -247,7 +250,7 @@ class PIDHeadHALOSameDDRAvg3Opt(BaseDecodeHead):
         cur_dilation, cur_dice_w, cur_fb_w = self._get_dynamic_params(current_step)
 
         if current_step % 50 == 0:
-            print('cur_dilation=' + str(cur_dilation) + ',cur_dice_w=' + str(cur_dice_w) + ', cur_fb_w=' + str(cur_fb_w))
+            self.logger.info('cur_dilation=' + str(cur_dilation) + ',cur_dice_w=' + str(cur_dice_w) + ', cur_fb_w=' + str(cur_fb_w))
 
         loss = dict()
         p_logit, i_logit, d_logit = seg_logits
