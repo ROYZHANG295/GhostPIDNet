@@ -20,6 +20,22 @@ load_from = './work_dirs/pidnet-best/pidnet-l_2xb6-120k_1024x1024-cityscapes_202
 
 # checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/pidnet/pidnet-s_imagenet1k_20230306-715e6273.pth'  # noqa
 
+# 官方硬编码的 CamVid 类别权重 (按类别顺序)
+camvid_class_weight = [
+    0.58872014,  # Sky (权重极低)
+    0.51052380,  # Building
+    2.69662786,  # Pole (权重极高，逼迫模型去学！)
+    0.45021695,  # Road (权重极低)
+    1.17158675,  # Pavement
+    0.77028579,  # Tree
+    2.47825885,  # SignSymbol
+    2.52734613,  # Fence
+    1.01225269,  # Car
+    3.23753095,  # Pedestrian (权重极高)
+    4.13123131   # Bicyclist (全场最高权重！)
+]
+
+
 # ================= 2. 模型设置 =================
 data_preprocessor = dict(
     type='SegDataPreProcessor',
@@ -59,10 +75,12 @@ model = dict(
             dict(
                 type='CrossEntropyLoss',
                 use_sigmoid=False,
+                class_weight=camvid_class_weight,  # ⚠️ 加上权重
                 loss_weight=0.4),
             dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
+                class_weight=camvid_class_weight,  # ⚠️ 加上权重
                 min_kept=131072,
                 loss_weight=1.0),
             dict(type='BoundaryLoss', loss_weight=20.0),
@@ -70,6 +88,7 @@ model = dict(
                 type='OhemCrossEntropy',
                 thres=0.9,
                 min_kept=131072,
+                class_weight=camvid_class_weight,  # ⚠️ 加上权重
                 loss_weight=1.0)
         ]),
     train_cfg=dict(),

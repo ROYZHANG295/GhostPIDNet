@@ -94,6 +94,7 @@ LOG_CONFIG = {
 # "PIDNet 1xb12 olb-fb dilation3-dice05-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice05-fb10-use_olb_and_fb-/20260411_202154/vis_data/scalars.json",
 "PIDNet 1xb12 dilation3-dice10-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation3-dice10-fb10-use_olb_and_fb/20260413_013500/vis_data/scalars.json",
 "PIDNet 1xb12 dilation543-dice10-fb10": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-experiment1-dilation543-dice10-fb10-use_olb_and_fb/20260414_122028/vis_data/scalars.json",
+"PIDNet 1xb12 dilation543-dice10-fb10 2": "work_dirs/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-ablation-dia5-d321-fb1/20260416_233249/vis_data/scalars.json",
 # Figure 4：Optimization stability / training dynamics
 #"PIDNet Baseline 1xb12 78.43": "experiments/test-0325-2-pidnet-s_1xb12-120k_1024x1024-cityscapes-runable-weight-class-A4000-78.43/20260325_050247/vis_data/scalars.json",
 # "PIDNet HALO 1xb12 79.08": "experiments/halo-pidnet-s-halo-same-ddr-1xb12-120k_1024x1024-cityscapes-FULL-fb_w-1_dice_w15-10-3090-79.08/20260410_133627/vis_data/scalars-add-first40k.json",
